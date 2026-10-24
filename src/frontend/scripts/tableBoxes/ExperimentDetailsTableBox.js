@@ -111,7 +111,7 @@ class ScATACExperimentDetails extends Component {
     const cellTypeText = v(exp.CellType) || "";
     const cellId = v(exp.CellID);
     const cellLink = (cellId && cellTypeText)
-      ? `<a href="#!table/gtrd_current.cells/Details/ID=${cellId}" target="_blanck">${cellTypeText}</a>`
+      ? `<a href="#!table/cells/Details/ID=${cellId}" target="_blanck">${cellTypeText}</a>`
       : (cellTypeText || null);
 
     // Files (может отсутствовать)
@@ -321,13 +321,13 @@ class ExperimentDetailsTableBox extends Component {
     const cellTypeText = v(exp.CellType) || "";
     const cellId = v(exp.CellID);
     const cellLink = (cellId && cellTypeText)
-      ? `<a href="#!table/gtrd_current.cells/Details/ID=${cellId}" target="_blanck">${cellTypeText}</a>`
+      ? `<a href="#!table/cells/Details/ID=${cellId}" target="_blanck">${cellTypeText}</a>`
       : (cellTypeText || null);
 
     let control = null;
     const controlId = v(exp.Control);
     if (controlId) {
-      control = `<a href="#!table/gtrd_current.experiments/Details/ID=${controlId}">${controlId}</a>`;
+      control = `<a href="#!table/experiments/Details/ID=${controlId}">${controlId}</a>`;
     }
 
     const files = safeJsonParse(v(exp.files_info), []);

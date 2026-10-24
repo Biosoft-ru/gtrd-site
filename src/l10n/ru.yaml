@@ -33,7 +33,7 @@ ru:
       - changeDate: Дата изменения
       - 'no': нет
       - 'yes': да
-  - gtrd_current.cells:
+  - cells:
     - topics: operationName
       entries:
       - Filter: Фильтр

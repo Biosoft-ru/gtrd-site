@@ -1,0 +1,15 @@
+external_refs:
+  type: table
+  displayName: External references
+  doc: External database references (GEO, PubMed, FANTOM, etc.) linked to experiments.
+
+  scheme:
+    columns:
+    - external_db:
+        type: VARCHAR(10)
+        canBeNull: true
+        doc: External database name (GEO, pubmed, FANTOM, etc.)
+    - external_db_id:
+        type: TEXT
+        canBeNull: true
+        doc: Identifier in the external database

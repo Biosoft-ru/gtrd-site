@@ -1,46 +1,70 @@
-gtrd_current.tf_links:
+tf_links:
   type: table
   displayName: TF & cofactors
   order: '20'
   primaryKey: id
+  doc: Transcription factors and cofactors with links to external databases (AnimalTFDB, CIS-BP, TFClass) and GTRD UniProt IDs.
   scheme:
     columns:
     - id:
         type: INT
         primaryKey: true
+        autoIncrement: true
+        doc: Internal identifier
     - gene:
         type: VARCHAR(20)
         canBeNull: true
+        doc: Gene symbol
+    - specie:
+        type: TEXT
+        canBeNull: true
+        doc: Species
     - type:
         type: VARCHAR(10)
         canBeNull: true
+        doc: Type (TF, Cofactor, Unclassified)
     - animal_db:
-        type: VARCHAR(40)
+        type: VARCHAR(30)
         canBeNull: true
+        doc: AnimalTFDB identifier
     - cis_bp:
-        type: VARCHAR(40)
+        type: VARCHAR(30)
         canBeNull: true
+        doc: CIS-BP identifier
     - tf_class_id:
-        type: VARCHAR(40)
+        type: VARCHAR(30)
         canBeNull: true
+        doc: TFClass identifier
     - gtrd_uniprot_id:
         type: VARCHAR(30)
         canBeNull: true
+        doc: GTRD UniProt identifier
     - function:
-        type: TEXT
+        type: VARCHAR(200)
         canBeNull: true
-    - specie:
-        type: VARCHAR(50)
-        canBeNull: true
-    - chip_seq:    
+        doc: Function description
+    - chip_seq:
         type: INT
         canBeNull: true
-    - chip_exo:    
+        doc: Number of ChIP-seq experiments
+    - chip_exo:
         type: INT
         canBeNull: true
+        doc: Number of ChIP-exo experiments
+
+    indices:
+    - species:
+        columns: specie
+    - animal_db:
+        columns: animal_db
+    - cis_bp:
+        columns: cis_bp
+    - tf_class_id:
+        columns: tf_class_id
+    - gtrd_uniprot_id:
+        columns: gtrd_uniprot_id
 
   queries:
-
   - Brief:
       type: 1D_unknown
       roles: '@AllRoles'
@@ -53,21 +77,20 @@ gtrd_current.tf_links:
             tf.specie AS "Species",
             tf.gene AS "Gene",
             tf.type AS "Type",
-            
+
             <@linkAnimalDB "tf.animal_db" "tf.type" /> AS "Animal TFDB",
             <@linkCisBP "tf.cis_bp"            />      AS "CIS-BP",
             <@linkTFClass "tf.tf_class_id"     />      AS "TF class",
-            
+
             IF(tf.gtrd_uniprot_id != '',
-            '<a href="#!table/gtrd_current.tf_links/Details/uniprot=' || tf.gtrd_uniprot_id || '">' || tf.gtrd_uniprot_id || '</a>', 
+            '<a href="#!table/tf_links/Details/uniprot=' || tf.gtrd_uniprot_id || '">' || tf.gtrd_uniprot_id || '</a>',
             '') AS "GTRD",
-            
-            tf.chip_seq AS "ChIP-seq", 
-            tf.chip_exo AS "ChIP-exo", 
-            
-            tf.function AS "Function"                         
-          FROM
-            ${INFO_SCHEMA}.tf_links tf
+
+            tf.chip_seq AS "ChIP-seq",
+            tf.chip_exo AS "ChIP-exo",
+
+            tf.function AS "Function"
+          FROM tf_links tf
           WHERE (1=1)
 
           <if parameter="species">
@@ -77,7 +100,7 @@ gtrd_current.tf_links:
           <if parameter="type" value="TF">           AND (1=1) </if>
           <if parameter="type" value="Cofactor">     AND (1=1) </if>
           <if parameter="type" value="Unclassified"> AND (1=1) </if>
-          
+
           <if parameter="gene">
             AND gene like '<parameter:gene/>%'
           </if>
@@ -86,7 +109,7 @@ gtrd_current.tf_links:
             tf.animal_db       = '<parameter:ref/>' OR
             tf.cis_bp          = '<parameter:ref/>' OR
             tf.tf_class_id     = '<parameter:ref/>' OR
-            tf.gtrd_uniprot_id = '<parameter:ref/>' 
+            tf.gtrd_uniprot_id = '<parameter:ref/>'
             )
           </if>
 
@@ -101,7 +124,7 @@ gtrd_current.tf_links:
 
           <if parameter="classification" value="GTRDmAnimalTFDB"> AND tf.gtrd_uniprot_id = '' AND tf.animal_db != '' AND tf.animal_db != '-'       </if>
           <if parameter="classification" value="GTRDmCis-BP">     AND tf.gtrd_uniprot_id = '' AND tf.cis_bp != '' AND tf.cis_bp != 'unmatched'     </if>
-          <if parameter="classification" value="GTRDmTFClass">    AND tf.gtrd_uniprot_id = '' AND tf.tf_class_id != ''  </if>
+          <if parameter="classification" value="GTRDmTFClass">    AND tf.gtrd_uniprot_id = '' AND tf.tf_class_id = ''  </if>
 
           <if parameter="classification" value="GTRDuAnimalTFDB"> AND tf.gtrd_uniprot_id != '' AND (tf.animal_db = '' OR tf.animal_db = '-')       </if>
           <if parameter="classification" value="GTRDuCis-BP">     AND tf.gtrd_uniprot_id != '' AND (tf.cis_bp = '' OR tf.cis_bp = 'unmatched')     </if>
@@ -123,23 +146,21 @@ gtrd_current.tf_links:
             tf.gene AS "gene",
             tf.type AS "type",
             tf.gtrd_uniprot_id AS "uniprot",
-            
+
             <@linkAnimalDB "tf.animal_db" "tf.type" /> AS "linkAnimalTFDB",
-            <@linkCisBP "tf.cis_bp"            />      AS "linkCisBP",
-            <@linkTFClass "tf.tf_class_id"     />      AS "linkTFClass",
-            <@linkUniprot "tf.gtrd_uniprot_id "/>      AS "linkUniprot",
-            
+            <@linkCisBP    "tf.cis_bp"              /> AS "linkCisBP",
+            <@linkTFClass  "tf.tf_class_id"         /> AS "linkTFClass",
+            <@linkUniprot  "tf.gtrd_uniprot_id"     /> AS "linkUniprot",
+
             u.gene_names    AS "geneNames",
             u.protein_names AS "proteinNames",
-            
-            tf.chip_seq AS "ChIP-seq", 
-            tf.chip_exo AS "ChIP-exo", 
-            
-            tf.function AS "Function"                         
-          FROM
-            ${INFO_SCHEMA}.tf_links tf
-            LEFT JOIN ${INFO_SCHEMA}.uniprot u ON u.id = tf.gtrd_uniprot_id
 
+            tf.chip_seq AS "ChIP-seq",
+            tf.chip_exo AS "ChIP-exo",
+
+            tf.function AS "Function"
+          FROM tf_links tf
+          LEFT JOIN uniprot u ON u.id = tf.gtrd_uniprot_id
           WHERE (1=1)
           <if parameter="uniprot"> AND gtrd_uniprot_id = '<parameter:uniprot/>' </if>
 
@@ -149,4 +170,3 @@ gtrd_current.tf_links:
       layout: '{"title":""}'
       roles: '@AllRoles'
       file: operations.TFFilter.groovy
-        

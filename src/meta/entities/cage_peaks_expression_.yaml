@@ -1,4 +1,4 @@
-gtrd_current.cage_peaks_expression_:
+cage_peaks_expression_:
   type: table
   primaryKey: dummy
   displayName: TSS expression

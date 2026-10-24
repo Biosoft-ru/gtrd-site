@@ -92,13 +92,13 @@ class RawDataTable extends React.Component
 
   loadData(exp_id) {
     this.setState({"rows": []});
-    fetchTableByUrl('table/gtrd_current.chip_experiments/Elements/id='+exp_id+"/type=ReadsGTRDType", json => {
+    fetchTableByUrl('table/chip_experiments/Elements/id='+exp_id+"/type=ReadsGTRDType", json => {
        var elements = json.data.attributes.rows;
        for(var i = 0; i < elements.length; i++)
        {
          let element_id = elements[i].element_id.value;
          
-         fetchTableByUrl('table/gtrd_current.chip_experiments/ElementProperties/id='+element_id, json => {
+         fetchTableByUrl('table/chip_experiments/ElementProperties/id='+element_id, json => {
            var elementProperties = {id: element_id};
            var properties = json.data.attributes.rows;
            for(var j = 0; j < properties.length; j++)
@@ -172,13 +172,13 @@ class AlignmentsTable extends React.Component
 
   loadData(exp_id) {
     this.setState({"rows": []});
-    fetchTableByUrl('table/gtrd_current.chip_experiments/Elements/id='+exp_id+"/type=AlignmentsGTRDType", json => {
+    fetchTableByUrl('table/chip_experiments/Elements/id='+exp_id+"/type=AlignmentsGTRDType", json => {
        var elements = json.data.attributes.rows;
        for(var i = 0; i < elements.length; i++)
        {
          let element_id = elements[i].element_id.value;
          
-         fetchTableByUrl('table/gtrd_current.chip_experiments/ElementProperties/id='+element_id, json => {
+         fetchTableByUrl('table/chip_experiments/ElementProperties/id='+element_id, json => {
            var elementProperties = {id: element_id};
            var properties = json.data.attributes.rows;
            for(var j = 0; j < properties.length; j++)
@@ -247,13 +247,13 @@ class PeaksTable extends React.Component
 
   loadData(exp_id) {
     this.setState({"rows": []});
-    fetchTableByUrl('table/gtrd_current.chip_experiments/Elements/id='+exp_id+"/type=PeaksGTRDType", json => {
+    fetchTableByUrl('table/chip_experiments/Elements/id='+exp_id+"/type=PeaksGTRDType", json => {
        var elements = json.data.attributes.rows;
        for(var i = 0; i < elements.length; i++)
        {
          let element_id = elements[i].element_id.value;
          
-         fetchTableByUrl('table/gtrd_current.chip_experiments/ElementProperties/id='+element_id, json => {
+         fetchTableByUrl('table/chip_experiments/ElementProperties/id='+element_id, json => {
            var elementProperties = {id: element_id};
            var properties = json.data.attributes.rows;
            for(var j = 0; j < properties.length; j++)
@@ -334,7 +334,7 @@ class Experiment extends React.Component
 registerDocument('Experiment', Experiment);
 
 registerRoute('experiment', (frontendParams, id) => {
-  fetchTableByUrl("table/gtrd_current.chip_experiments/OneRecordDetailed/id=" + id,
+  fetchTableByUrl("table/chip_experiments/OneRecordDetailed/id=" + id,
       json => {
         changeDocument(frontendParams.documentName, {value: json, frontendParams: {type: 'Experiment'}});
       }

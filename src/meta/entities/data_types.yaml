@@ -1,39 +1,45 @@
-gtrd_current.data_types:
+data_types:
   type: table
-  displayName: Experiment types
+  displayName: Data types
   order: '10'
   primaryKey: id
+  doc: Types of data files available in GTRD (meta-clusters, peaks, footprints, etc.)
+
   scheme:
     columns:
     - id:
-        type: VARCHAR(20)
+        type: VARCHAR(50)
+        primaryKey: true
+        doc: Data type identifier
     - name:
-        type: VARCHAR(20)
+        type: VARCHAR(50)
+        doc: Human-readable data type name
     - description:
         type: TEXT
+        doc: Description of the data type
     - order_:
         type: INT
-  
+        doc: Display order of the data type
+
   queries:
   - Selection for experiment type:
       type: 1D_unknown
       invisible: true
       roles: '@AllRoles'
       code: |-
-          SELECT 
+          SELECT
             d.id AS "Code",
             d.name AS "Name"
-          FROM ${INFO_SCHEMA}.experiment2data_types e
-          LEFT JOIN ${INFO_SCHEMA}.data_types d ON d.id = e.data_type
+          FROM experiment2data_types e
+          LEFT JOIN data_types d ON d.id = e.data_type
           WHERE (1=1)
           <if parameter="species">
             AND e.species = '<parameter:species/>'
           </if>
 
           <if parameter="experiment">
-             AND e.experiment_type = '<parameter:experiment/>' 
+             AND e.experiment_type = '<parameter:experiment/>'
           </if>
-          
+
           GROUP BY 1
           ORDER BY d.order_
-        

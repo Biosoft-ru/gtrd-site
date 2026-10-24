@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS ${STATISTICS_SCHEMA}.stats_cells2experiments;
+DROP TABLE IF EXISTS stats_cells2experiments;
 
-CREATE TABLE ${STATISTICS_SCHEMA}.stats_cells2experiments 
+CREATE TABLE stats_cells2experiments 
 (
 	cell_id INT NOT NULL PRIMARY KEY,
 	chip_seq  	          INT DEFAULT 0,
@@ -17,18 +17,18 @@ CREATE TABLE ${STATISTICS_SCHEMA}.stats_cells2experiments
     tf_chip_exo	          INT DEFAULT 0,
     rna_seq   	          INT DEFAULT 0,
     cage_seq              INT DEFAULT 0
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+)DEFAULT CHARSET=utf8;
    
-INSERT INTO ${STATISTICS_SCHEMA}.stats_cells2experiments(cell_id)
-SELECT id FROM ${INFO_SCHEMA}.cells;
+INSERT INTO stats_cells2experiments(cell_id)
+SELECT id FROM .cells;
 
 <#assign control = " AND e.design_type IN ('bio-control', 'chip_control', 'chipexo_control', 'hist_control')" >
 
 <#macro stats field type condition>
-UPDATE ${STATISTICS_SCHEMA}.stats_cells2experiments AS stats
+UPDATE stats_cells2experiments AS stats
 INNER JOIN(
 	SELECT cell_id, count(*) AS "cnt"
-    FROM ${INFO_SCHEMA}.experiments e
+    FROM .experiments e
     WHERE e.type = '${type}'  ${condition}
     GROUP BY cell_id 
 ) AS exp USING (cell_id)
@@ -55,19 +55,19 @@ SET stats.${field} = exp.cnt;
 
 
 -- TF & cofactors
-UPDATE ${STATISTICS_SCHEMA}.stats_cells2experiments AS stats
+UPDATE stats_cells2experiments AS stats
 INNER JOIN(
 	SELECT cell_id, count(distinct tf_uniprot_id) AS "cnt"
-    FROM ${INFO_SCHEMA}.experiments e
+    FROM .experiments e
     WHERE e.type = 'ChIP-seq' AND e.design_type NOT IN ('chip_control', 'bio-control') AND e.tf_uniprot_id IS NOT NULL
     GROUP BY cell_id
 ) AS exp USING (cell_id)
 SET stats.tf_chip_seq = exp.cnt;
 
-UPDATE ${STATISTICS_SCHEMA}.stats_cells2experiments AS stats
+UPDATE stats_cells2experiments AS stats
 INNER JOIN(
 	SELECT cell_id, count(distinct tf_uniprot_id) AS "cnt"
-    FROM ${INFO_SCHEMA}.experiments e
+    FROM .experiments e
     WHERE e.type = 'ChIP-exo' AND e.design_type NOT IN ('chip_control', 'bio-control') AND e.tf_uniprot_id IS NOT NULL
     GROUP BY cell_id
 ) AS exp USING (cell_id)

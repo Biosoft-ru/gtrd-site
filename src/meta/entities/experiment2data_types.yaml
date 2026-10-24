@@ -1,0 +1,19 @@
+experiment2data_types:
+  type: table
+  displayName: Experiment 2 data types
+  order: '10'
+  doc: Mapping between experiments and data types, grouped by species.
+
+  scheme:
+    columns:
+    - species:
+        type: VARCHAR(50)
+        canBeNull: true
+        doc: Species of the experiment
+    - experiment_type:
+        type: VARCHAR(20)
+        canBeNull: true
+        doc: Experiment type (ChIP-seq, CAGE-seq, etc.)
+    - data_type:
+        type: VARCHAR(50)
+        doc: Data type identifier (reference to data_types.id)

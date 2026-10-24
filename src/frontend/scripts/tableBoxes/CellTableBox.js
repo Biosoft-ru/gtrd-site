@@ -15,7 +15,7 @@ class CellTableBox extends Component
     this.title = cell.PageTitle.value;
     be5.ui.setTitle(this.title);
 
-    const tableRef = '#!table/gtrd_current.';
+    const tableRef = '#!table/';
 
   	const steps = [
 		{title: "Description", 		  url: tableRef + 'cells/Description/ID='                       + cell.ID.value},

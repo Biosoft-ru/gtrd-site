@@ -14,7 +14,7 @@ class Filter extends FilterOperation
 
         dps.edit("specie", "specie") {
             TAG_LIST_ATTR = queries.getTagsFromCustomSelectionView(
-                    "gtrd_current.chip_experiments", "Selection view specie")
+                    "chip_experiments", "Selection view specie")
             RELOAD_ON_CHANGE = true
         }
 
@@ -23,7 +23,7 @@ class Filter extends FilterOperation
             map = Collections.singletonMap("specie", (String) presetValues.get("specie"))
         }
         dps.add("cell_id", "Cells") {
-            TAG_LIST_ATTR = queries.getTagsFromSelectionView("gtrd_current.cells", map)
+            TAG_LIST_ATTR = queries.getTagsFromSelectionView("cells", map)
         }
         dps.moveAfter("cell_id", "specie")
 

@@ -32,7 +32,7 @@ class EnhancerTableBox extends Component
 	const location =  enhancer.Chromosome.value + ": " + enhancer.Start.value.toLocaleString() + " - " 
 	                                                   + enhancer.End.value.toLocaleString(); 
 
-    const tableRef    = '#!table/gtrd_current.cage_enhancers_/';
+    const tableRef    = '#!table/cage_enhancers_/';
     const params      = '/genome=' + enhancer.Genome.value + '/species=' + enhancer.Species.value + '/id=' + enhancer.ID.value;
 	const locationRef = '/chromosome=' + enhancer.Chromosome.value + '/start=' + enhancer.Start.value + '/end=' + enhancer.End.value
 

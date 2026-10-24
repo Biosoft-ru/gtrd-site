@@ -29,7 +29,7 @@ class FileFilter extends FilterOperation
 		String[][] dataTags   = null;
 
         dps.add("species", "Species") {
-			TAG_LIST_ATTR = queries.getTagsFromSelectionView("gtrd_current.species")
+			TAG_LIST_ATTR = queries.getTagsFromSelectionView("species")
 			RELOAD_ON_CHANGE = true
         }
 
@@ -37,7 +37,7 @@ class FileFilter extends FilterOperation
 			map.put("species", (String)presetValues.get("species"))
 
 		dps.add("experiment", "Experiment") {
-			TAG_LIST_ATTR = queries.getTagsFromCustomSelectionView("gtrd_current.experiment_types", "Types for files", map)
+			TAG_LIST_ATTR = queries.getTagsFromCustomSelectionView("experiment_types", "Types for files", map)
 			RELOAD_ON_CHANGE = true
 		}
 			
@@ -45,7 +45,7 @@ class FileFilter extends FilterOperation
 		{
             map.put("experiment", experimentType)
 			
-			dataTags = queries.getTagsFromCustomSelectionView("gtrd_current.data_types", "Selection for experiment type", map)
+			dataTags = queries.getTagsFromCustomSelectionView("data_types", "Selection for experiment type", map)
 				
 			dps.add("data", "Data type") {
             TAG_LIST_ATTR = dataTags

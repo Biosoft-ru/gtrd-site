@@ -1,51 +1,88 @@
-gtrd_current.experiments:
+experiments:
   type: table
   displayName: Experiments
   order: '10'
   primaryKey: id
+  doc: All GTRD experiments (ChIP-seq, CAGE-seq, RNA-seq, etc.), linked to cells, TFs, and external references.
+
   scheme:
     columns:
     - id:
         type: VARCHAR(20)
         primaryKey: true
+        doc: Experiment identifier
     - type:
         type: VARCHAR(20)
-        reference: gtrd_current.experiment_types.id
+        reference: experiment_types.id
+        doc: Experiment type (ChIP-seq, CAGE-seq, RNA-seq, etc.)
     - species:
-        type: VARCHAR(20)
+        type: VARCHAR(50)
+        doc: Species of the experiment
     - cell_id:
         type: INT
-        reference: gtrd_current.cells.id
+        reference: cells.id
+        doc: Cell line used in the experiment
     - treatment:
         type: TEXT
         canBeNull: true
+        doc: Treatment or condition description
     - design_type:
         type: VARCHAR(20)
         canBeNull: true
+        doc: Experimental design type (control, replicate, etc.)
     - control_id:
         type: VARCHAR(20)
         canBeNull: true
+        doc: Identifier of the control experiment
     - antibody:
         type: TEXT
         canBeNull: true
+        doc: Antibody used (for ChIP experiments)
     - tf_uniprot_id:
         type: VARCHAR(10)
         canBeNull: true
-  
+        doc: UniProt ID of the transcription factor or cofactor
+    - target:
+        type: VARCHAR(20)
+        canBeNull: true
+        doc: Target (for histone mark experiments)
+    - source:
+        type: VARCHAR(20)
+        canBeNull: true
+        doc: Data source
+    - geo_gse:
+        type: VARCHAR(20)
+        canBeNull: true
+        doc: GEO Series identifier (GSE)
+    - geo_gsm:
+        type: VARCHAR(20)
+        canBeNull: true
+        doc: GEO Sample identifier (GSM)
+
+    indices:
+    - cell_id:
+        columns: cell_id
+    - tf_uniprot_id:
+        columns: tf_uniprot_id
+    - geo_gse:
+        columns: geo_gse
+    - geo_gsm:
+        columns: geo_gsm
+
   queries:
   - '*** Selection view ***':
       type: 1D
-      code: SELECT ID AS "Code", antibody AS "Name" FROM ${INFO_SCHEMA}.experiments
+      code: SELECT ID AS "Code", antibody AS "Name" FROM experiments
 
   - 'Select cells for species and type':
       type: 1D_unknown
       code: |-
           SELECT DISTINCT e.cell_id AS "CODE", c.title AS "Name"
-          FROM ${INFO_SCHEMA}.experiments e 
-          INNER JOIN ${INFO_SCHEMA}.cells c ON e.cell_id=c.id
+          FROM experiments e
+          INNER JOIN cells c ON e.cell_id=c.id
           WHERE e.species = '<parameter:species/>'
           <if parameter="type">
-             AND e.type = <parameter:type/> 
+             AND e.type = <parameter:type/>
           </if>
           ORDER BY c.title
 
@@ -59,13 +96,13 @@ gtrd_current.experiments:
           SELECT
             e.id AS "___id",
             e.id AS "ID",
-            '<link table="${INFO_SCHEMA}.experiments" queryName="Details" using="___id" columns="ID" />' AS ";ID",
+            '<link table="experiments" queryName="Details" using="___id" columns="ID" />' AS ";ID",
 
             e.type AS "Type;<quick visible='true' />",
             e.species AS "Species;<quick visible='true' />",
             e.cell_id AS "___cell_id",
             c.title AS "Cell type",
-            '<link table="${INFO_SCHEMA}.cells" queryName="Details" using="___cell_id" columns="ID" />' AS ";Cell type",
+            '<link table="cells" queryName="Details" using="___cell_id" columns="ID" />' AS ";Cell type",
             e.treatment AS "Treatment;<quick visible='true' />",
             e.control_id AS "Control;<quick visible='false' />",
             e.design_type AS "Design;<quick visible='true' />",
@@ -80,11 +117,11 @@ gtrd_current.experiments:
 
             <@linkGEO "e.geo_gse" /> AS "GEO series;<quick visible='true' />",
             <@linkGEO "e.geo_gsm" /> AS "GEO sample;<quick visible='true' />"
-            
+
           FROM
-            ${INFO_SCHEMA}.experiments e
-          LEFT JOIN ${INFO_SCHEMA}.uniprot u ON u.id=e.tf_uniprot_id
-          LEFT JOIN ${INFO_SCHEMA}.cells c ON c.id = e.cell_id  
+            experiments e
+          LEFT JOIN uniprot u ON u.id=e.tf_uniprot_id
+          LEFT JOIN cells c ON c.id = e.cell_id
 
           WHERE (1=1)
 
@@ -125,61 +162,61 @@ gtrd_current.experiments:
             u.protein_names AS "Protein",
 
             e.target AS "Target",
-            
+
             '<sql using="ID" beautifierName="line">
-            SELECT 
+            SELECT
                CONCAT('<a target="_blank" href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',external_db_id,'">',external_db_id,'</a>')
-               FROM ${INFO_SCHEMA}.external_refs 
+               FROM external_refs
                WHERE external_db='GEO' and external_db_id like 'GSE%' AND id = ?
             </sql>' AS "geo_series",
-               
-               
+
+
             '<sql using="ID" beautifierName="line">
-            SELECT 
+            SELECT
                CONCAT('<a target="_blank" href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',external_db_id,'">',external_db_id,'</a>')
-               FROM ${INFO_SCHEMA}.external_refs 
+               FROM external_refs
                WHERE external_db='GEO' and external_db_id like 'GSM%' AND id = ?
             </sql>' AS "geo_samples",
-            
+
             '<sql using="ID" beautifierName="json">
-            SELECT 
-               external_db_id 
-            FROM ${INFO_SCHEMA}.external_refs 
+            SELECT
+               external_db_id
+            FROM external_refs
             WHERE external_db='GEO' and external_db_id like 'GSM%' AND id = ?
             </sql>' AS "geo_samples_json",
-            
+
             '<sql using="ID">
-            SELECT 
+            SELECT
                CONCAT('<a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/',article.pubmed_id,'">',string_agg(author.short_name, ', ' ORDER BY a2a.author_order ASC), '. ', article.title, ' ', journal.short_name, ' ', article.pages, '.', '</a>')
-            FROM ${INFO_SCHEMA}.external_refs e 
-            JOIN ${INFO_SCHEMA}.article article ON e.external_db_id=article.pubmed_id
-            JOIN ${INFO_SCHEMA}.article_to_author a2a ON(a2a.article_id=article.id) 
-            JOIN ${INFO_SCHEMA}.author author ON(author.id=a2a.author_id)
-            JOIN ${INFO_SCHEMA}.journal journal ON(journal.id=article.journal_id)
-            WHERE external_db='pubmed' and e.id = ? 
+            FROM external_refs e
+            JOIN article article ON e.external_db_id=article.pubmed_id
+            JOIN article_to_author a2a ON(a2a.article_id=article.id)
+            JOIN author author ON(author.id=a2a.author_id)
+            JOIN journal journal ON(journal.id=article.journal_id)
+            WHERE external_db='pubmed' and e.id = ?
             GROUP BY article.pubmed_id
             </sql>' AS "article",
-                                        
+
             '<sql using="ID" beautifierName="json">
-            SELECT f.id, f.exp_id, f.peaks_id, f.exp_design, f.data_type, f.target, f.peakcaller, f.species, f.assembly, f.name, f.path, f.format, f.size, f.item_count 
-            FROM gtrd_current.files_info f
+            SELECT f.id, f.exp_id, f.peaks_id, f.exp_design, f.data_type, f.target, f.peakcaller, f.species, f.assembly, f.name, f.path, f.format, f.size, f.item_count
+            FROM files_info f
             WHERE f.exp_id = ?
             </sql>' AS files_info,
 
             '<sql using="ID" beautifierName="json">
             SELECT property_name name,property_value value
-            FROM gtrd_current.properties JOIN gtrd_current.hub on(hub.input=properties.id)
+            FROM properties JOIN hub on(hub.input=properties.id)
             WHERE property_name like 'QC.%' and output=?
             </sql>' AS qc,
-            
+
             ss.cell_num    AS "NumberOfCells",
             ss.cluster_num AS "NumberOfClusters"
 
           FROM
-            ${INFO_SCHEMA}.experiments e
-          LEFT JOIN ${INFO_SCHEMA}.uniprot u ON u.id=e.tf_uniprot_id
-          LEFT JOIN ${INFO_SCHEMA}.cells c ON c.id = e.cell_id
-          LEFT JOIN gtrd_current.scatac_experiment_stats ss ON ss.id = e.id
+            experiments e
+          LEFT JOIN uniprot u ON u.id=e.tf_uniprot_id
+          LEFT JOIN cells c ON c.id = e.cell_id
+          LEFT JOIN scatac_experiment_stats ss ON ss.id = e.id
           WHERE e.id = '<parameter:ID/>'
 
   - ForCell:
@@ -191,14 +228,14 @@ gtrd_current.experiments:
           SELECT
             e.id AS "___id",
             e.id AS "ID",
-            '<link table="${INFO_SCHEMA}.experiments" queryName="Details" using="___id" columns="ID" />' AS ";ID",
+            '<link table="experiments" queryName="Details" using="___id" columns="ID" />' AS ";ID",
 
-            <if parameter="chromatin">  
-               e.type AS "Type", 
+            <if parameter="chromatin">
+               e.type AS "Type",
             </if>
 
             e.treatment AS "Treatment;<quick visible='true' />",
-            <if parameter="chip">  
+            <if parameter="chip">
                e.antibody AS "Antibody;<safexml/>;<quick visible='true' />",
                u.cached_tf_class AS "TF class",
                CONCAT('<a href="https://www.uniprot.org/uniprot/', u.id, '" target="_blank">', u.id,'</a>') AS "Uniprot",
@@ -206,12 +243,12 @@ gtrd_current.experiments:
                u.protein_names AS "Protein;<quick visible='true' />",
             </if>
 
-            <if parameter="hm">  
+            <if parameter="hm">
                e.antibody AS "Antibody;<safexml/>;<quick visible='true' />",
                e.target   AS "Target",
             </if>
 
-            <if parameter="rna">  
+            <if parameter="rna">
                e.design_type AS "Influence",
                u.cached_tf_class AS "TF class",
                CONCAT('<a href="https://www.uniprot.org/uniprot/', u.id, '" target="_blank">', u.id,'</a>') AS "Uniprot",
@@ -221,16 +258,16 @@ gtrd_current.experiments:
 
             e.control_id AS "___control",
             e.control_id AS "Control",
-            '<quick visible="false" />;<link table="${INFO_SCHEMA}.experiments" queryName="Details" using="___control" columns="ID" />' AS ";Control"
+            '<quick visible="false" />;<link table="experiments" queryName="Details" using="___control" columns="ID" />' AS ";Control"
           FROM
-            ${INFO_SCHEMA}.experiments e
-          <if parameter="chip">  
-             LEFT JOIN ${INFO_SCHEMA}.uniprot u ON u.id=e.tf_uniprot_id  
+            experiments e
+          <if parameter="chip">
+             LEFT JOIN uniprot u ON u.id=e.tf_uniprot_id
           </if>
-          <if parameter="rna">  
-             LEFT JOIN ${INFO_SCHEMA}.uniprot u ON u.id=e.tf_uniprot_id  
+          <if parameter="rna">
+             LEFT JOIN uniprot u ON u.id=e.tf_uniprot_id
           </if>
- 
+
           WHERE e.cell_id = <parameter:cell_id/> AND (e.design_type is null OR e.design_type NOT IN ${control})
           <if parameter="chip" value="seq">   AND e.type = 'ChIP-seq'        </if>
           <if parameter="chip" value="exo">   AND e.type = 'ChIP-exo'        </if>
@@ -238,7 +275,7 @@ gtrd_current.experiments:
           <if parameter="chromatin">  AND e.type IN ${chromatin}     </if>
           <if parameter="rna">        AND e.type = 'RNA-seq'         </if>
           <if parameter="cage">       AND e2.type = 'CAGE-seq'        </if>
-          
+
           ORDER BY ID
 
   - OneRecord:
@@ -254,7 +291,7 @@ gtrd_current.experiments:
               ce.treatment AS "Treatment",
               ce.control_id AS "Control",
               ce.tf_uniprot_id AS "TF"
-            FROM gtrd_current.chip_experiments ce
+            FROM chip_experiments ce
             WHERE ce.id = <parameter:id/>
 
   - OneRecordDetailed:
@@ -276,20 +313,20 @@ gtrd_current.experiments:
               uniprot.protein_names AS tf_protein_names,
               tf_class_hub.input AS tf_class_id,
               '<sql using="id" beautifierName="line">SELECT CONCAT('<a target="_blank" href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',external_db_id,'">',external_db_id,'</a>')
-                 FROM gtrd_current.external_refs WHERE external_db='GEO' and external_db_id like 'GSE%' AND id = ?</sql>' AS "geo_series",
+                 FROM external_refs WHERE external_db='GEO' and external_db_id like 'GSE%' AND id = ?</sql>' AS "geo_series",
               '<sql using="id" beautifierName="line">SELECT CONCAT('<a target="_blank" href="http://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=',external_db_id,'">',external_db_id,'</a>')
-                 FROM gtrd_current.external_refs WHERE external_db='GEO' and external_db_id like 'GSM%' AND id = ?</sql>' AS "geo_samples",
-              '<sql using="id" beautifierName="json">SELECT external_db_id FROM gtrd_current.external_refs WHERE external_db='GEO' and external_db_id like 'GSM%' AND id = ?</sql>' AS "geo_samples_json",
+                 FROM external_refs WHERE external_db='GEO' and external_db_id like 'GSM%' AND id = ?</sql>' AS "geo_samples",
+              '<sql using="id" beautifierName="json">SELECT external_db_id FROM external_refs WHERE external_db='GEO' and external_db_id like 'GSM%' AND id = ?</sql>' AS "geo_samples_json",
               '<sql using="id">SELECT CONCAT('<a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/',article.pubmed_id,'">',string_agg(author.short_name, ', ' ORDER BY a2a.author_order ASC), '. ', article.title, ' ', journal.short_name, ' ', article.pages, '.', '</a>')
-                 FROM gtrd_current.external_refs e JOIN gtrd_current.article article ON(e.external_db_id=article.pubmed_id)
-                 JOIN gtrd_current.article_to_author a2a ON(a2a.article_id=article.id) JOIN gtrd_current.author author ON(author.id=a2a.author_id)
-                 JOIN gtrd_current.journal journal ON(journal.id=article.journal_id)
+                 FROM external_refs e JOIN article article ON(e.external_db_id=article.pubmed_id)
+                 JOIN article_to_author a2a ON(a2a.article_id=article.id) JOIN author author ON(author.id=a2a.author_id)
+                 JOIN journal journal ON(journal.id=article.journal_id)
                  WHERE external_db='pubmed' and e.id = ? GROUP BY article.pubmed_id</sql>' AS "article"
-              
-            FROM gtrd_current.chip_experiments ce
-            LEFT JOIN gtrd_current.uniprot on(uniprot.id=tf_uniprot_id)
-            LEFT JOIN gtrd_current.hub tf_class_hub on(tf_class_hub.output_type='UniprotProteinTableType' AND tf_class_hub.input_type='ProteinGTRDType' AND tf_class_hub.output=ce.tf_uniprot_id)
-            LEFT JOIN gtrd_current.cells on(ce.cell_id=cells.id)
+
+            FROM chip_experiments ce
+            LEFT JOIN uniprot on(uniprot.id=tf_uniprot_id)
+            LEFT JOIN hub tf_class_hub on(tf_class_hub.output_type='UniprotProteinTableType' AND tf_class_hub.input_type='ProteinGTRDType' AND tf_class_hub.output=ce.tf_uniprot_id)
+            LEFT JOIN cells on(ce.cell_id=cells.id)
             WHERE ce.id = <parameter:id/>
 
   - ElementProperties:
@@ -298,7 +335,7 @@ gtrd_current.experiments:
         layout: '{"mode":"named"}'
         invisible: true
         code: |-
-          SELECT property_name, property_value FROM gtrd_current.properties where id=<parameter:id type="java.lang.String"/>
+          SELECT property_name, property_value FROM properties where id=<parameter:id type="java.lang.String"/>
 
   - Elements:
         type: 1D_unknown
@@ -306,7 +343,7 @@ gtrd_current.experiments:
         layout: '{"mode":"named"}'
         invisible: true
         code: |-
-          SELECT hub.input AS element_id FROM gtrd_current.hub where output_type='ExperimentGTRDType' AND input_type=<parameter:type type="java.lang.String"/> AND output=<parameter:id type="java.lang.String"/>
+          SELECT hub.input AS element_id FROM hub where output_type='ExperimentGTRDType' AND input_type=<parameter:type type="java.lang.String"/> AND output=<parameter:id type="java.lang.String"/>
 
   - Reads1:
         type: 1D_unknown
@@ -314,7 +351,7 @@ gtrd_current.experiments:
         layout: '{"mode":"named"}'
         invisible: true
         code: |-
-          SELECT hub.input,properties.property_name, properties.property_value FROM gtrd_current.hub hub JOIN gtrd_current.properties properties ON(hub.input=properties.id)
+          SELECT hub.input,properties.property_name, properties.property_value FROM hub hub JOIN properties properties ON(hub.input=properties.id)
           WHERE hub.input_type='ReadsGTRDType' AND hub.output_type='ExperimentGTRDType' AND hub.output = <parameter:id type="java.lang.String"/>
 
   - Reads:
@@ -323,9 +360,9 @@ gtrd_current.experiments:
         layout: '{"mode":"named"}'
         invisible: true
         code: |-
-          SELECT hub.input,properties.property_name, properties.property_value FROM gtrd_current.chip_experiments e JOIN gtrd_current.hub hub ON(hub.output=e.id) JOIN gtrd_current.properties properties ON(hub.input=properties.id)
+          SELECT hub.input,properties.property_name, properties.property_value FROM chip_experiments e JOIN hub hub ON(hub.output=e.id) JOIN properties properties ON(hub.input=properties.id)
           WHERE hub.input_type='ReadsGTRDType' AND hub.output_type='ExperimentGTRDType' AND e.id = <parameter:id/>
-          
+
   operations:
   - ExperimentFilter:
       type: Groovy

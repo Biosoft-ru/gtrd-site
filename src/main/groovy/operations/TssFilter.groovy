@@ -10,7 +10,7 @@ import static com.developmentontheedge.be5.operation.validation.ValidationRules.
 /**
  * Some hacks
  *
- * 1) "genome" property is set up in url - /#!table/gtrd_current.cage_peaks_/Transcription%20start%20sites/genome=hg38
+ * 1) "genome" property is set up in url - /#!table/cage_peaks_/Transcription%20start%20sites/genome=hg38
  * However, for consistency of filter by species it can be edited.
  *
  * 2) location property by default is gene

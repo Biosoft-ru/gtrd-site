@@ -1,19 +1,27 @@
-gtrd_current.experiment_types:
+experiment_types:
   type: table
   displayName: Experiment types
   order: '10'
   primaryKey: id
+  doc: Types of experiments in the GTRD database (ChIP-seq, CAGE-seq, RNA-seq, etc.), with display order.
+
   scheme:
     columns:
     - id:
         type: VARCHAR(20)
+        primaryKey: true
+        doc: Experiment type code (e.g. ChIP-seq, CAGE-seq)
     - description:
         type: TEXT
+        doc: Short description of the experiment type
+    - order_:
+        type: INT
+        doc: Display order of the experiment type
 
   queries:
   - '*** Selection view ***':
       type: 1D_unknown
-      code: SELECT ID AS "Code", ID AS "Name" FROM ${INFO_SCHEMA}.experiment_types ORDER BY order_
+      code: SELECT ID AS "Code", ID AS "Name" FROM experiment_types ORDER BY order_
 
   - 'Types for files':
       type: 1D_unknown
@@ -22,11 +30,11 @@ gtrd_current.experiment_types:
             e2d.experiment_type AS "Code",
             e2d.experiment_type AS "Name",
             IFNULL(e.order_, 10) AS "Order"
-          FROM ${INFO_SCHEMA}.experiment2data_types e2d 
-          LEFT JOIN ${INFO_SCHEMA}.experiment_types e ON e.id = e2d.experiment_type
+          FROM experiment2data_types e2d
+          LEFT JOIN experiment_types e ON e.id = e2d.experiment_type
           WHERE (1=1)
           <if parameter="species">
             AND e2d.species = '<parameter:species/>'
           </if>
           GROUP BY 1
-          ORDER BY 3      
+          ORDER BY 3

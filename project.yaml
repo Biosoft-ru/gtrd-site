@@ -14,33 +14,40 @@ gtrd-be5-site:
   application:
   - _gtrd_page_
   - _statistics_
-  - gtrd_current.cage_peaks_expression_
-  - gtrd_current.cage_peaks_
-  - gtrd_current.cage_promoters_annotation_
-  - gtrd_current.cage_promoters2transcripts_
-  - gtrd_current.cage_enhancers_
-  - gtrd_current.cage_enhancers2genes_
-  - gtrd_current.cells
-  - gtrd_current.experiments
-  - gtrd_current.experiment_types
-  - gtrd_current.experiment2data_types
-  - gtrd_current.external_refs
-  - gtrd_current.data_types
-  - gtrd_current.database_info
-  - gtrd_current.files_info
-  - gtrd_current.files_info_stats
-  - gtrd_current.species
-  - gtrd_current.tf_links
-  - gtrd_current.uniprot
+  #- cage_peaks_expression_
+  #- cage_peaks_
+  #- cage_promoters_annotation_
+  #- cage_promoters2transcripts_
+  #- cage_enhancers_
+  #- cage_enhancers2genes_
+  - cells
+  - experiments
+  - experiment_types
+  - experiment2data_types
+  - external_refs
+  - data_types
+  - database_info
+  - files_info
+  - files_info_stats
+  - species
+  - tf_links
+  - uniprot
+
   scripts:
   - Post-db
   - dictionaries
-  - stats
-  - copy-meta
   - copy-cage
-  - database-info
-  - files-info
   - tmp
+
+  - database_info
+  - data_types
+  - experiments
+  - experiment_types
+  - files_info_stats
+  - species
+  - stats_cells2experiments
+  - tf_links
+
   includes: common
 
 

@@ -15,7 +15,7 @@ class CellFilter extends FilterOperation
 
         dps.add("species", "Species") {
             TAG_LIST_ATTR = queries.getTagsFromCustomSelectionView(
-                    "gtrd_current.cells", "Selection view species")
+                    "cells", "Selection view species")
 			RELOAD_ON_CHANGE = true
         }
 

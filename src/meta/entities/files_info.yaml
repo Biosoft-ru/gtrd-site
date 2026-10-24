@@ -1,56 +1,77 @@
-gtrd_current.files_info:
+files_info:
   type: table
   displayName: Downloads
   order: '50'
   primaryKey: id
+  doc: Information about downloadable data files (peaks, clusters, alignments, etc.)
   scheme:
     columns:
     - id:
         type: BIGINT
         primaryKey: true
+        autoIncrement: true
+        doc: Internal file identifier
     - exp_id:
         type: VARCHAR(100)
         canBeNull: true
+        doc: Experiment identifier (reference to experiments.id)
     - peaks_id:
         type: VARCHAR(100)
         canBeNull: true
+        doc: Peaks table identifier (for CAGE data)
     - exp_design:
         type: VARCHAR(100)
         canBeNull: true
+        doc: Experimental design type
     - data_type:
         type: VARCHAR(100)
         canBeNull: true
+        doc: Data type (reference to data_types.id)
     - target:
         type: VARCHAR(100)
         canBeNull: true
+        doc: Target (TF UniProt ID for ChIP, histone mark, etc.)
     - cell_id:
-        type: VARCHAR(100)
+        type: VARCHAR(255)
         canBeNull: true
+        doc: Cell line identifier (reference to cells.id)
     - peakcaller:
         type: VARCHAR(100)
         canBeNull: true
+        doc: Peak caller used (MACS2, GEM, PICS, SISSRS, etc.)
     - species:
         type: VARCHAR(100)
         canBeNull: true
+        doc: Species
     - assembly:
         type: VARCHAR(100)
         canBeNull: true
+        doc: Genome assembly (hg38, mm10, rn6, etc.)
     - name:
         type: VARCHAR(255)
         canBeNull: true
+        doc: File name
     - path:
         type: VARCHAR(1000)
+        doc: File path/URL
     - format:
         type: VARCHAR(100)
         canBeNull: true
+        doc: File format (bed, bigBed, bigWig, etc.)
     - item_count:
         type: BIGINT
         canBeNull: true
+        doc: Number of items in the file
     - size:
         type: BIGINT
+        canBeNull: true
+        doc: File size in bytes
+    - biouml_url:
+        type: VARCHAR(255)
+        canBeNull: true
+        doc: BioUML diagram URL
 
   queries:
-
   - List:
       type: 1D_unknown
       roles: '@AllRoles'
@@ -61,28 +82,28 @@ gtrd_current.files_info:
           SELECT
             f.species    AS "Species",
             f.exp_design AS "Data type",
-            f.data_type  AS "TYPE", 
+            f.data_type  AS "TYPE",
 
             <if parameter="has_cell">
                f.cell_id AS "___cell_id",
                c.title AS "Cell type",
-               '<link table="${INFO_SCHEMA}.cells" queryName="Details" using="___cell_id" columns="ID" />;<quick visible="true" />' AS ";Cell type",
+               '<link table="cells" queryName="Details" using="___cell_id" columns="ID" />;<quick visible="true" />' AS ";Cell type",
             </if>
-   
+
             <if parameter="has_exp">
                e.treatment AS "Treatment;<quick visible='true' />",
                f.exp_id AS "___exp_id",
                f.exp_id AS "Experiment",
-               '<link table="${INFO_SCHEMA}.experiments" queryName="Details" using="___exp_id" columns="ID" />' AS ";Experiment",
+               '<link table="experiments" queryName="Details" using="___exp_id" columns="ID" />' AS ";Experiment",
                <@linkGEO "e.geo_gse" /> AS "GEO series;<quick visible='true' />",
                <@linkGEO "e.geo_gsm" /> AS "GEO sample;<quick visible='true' />",
             </if>
-            
+
             f.peakcaller AS "Peak caller;<quick visible='true'/>",
             f.assembly AS "Assembly;<quick visible='false'/>",
-            
+
             f.target,
-            
+
             <if parameter="has_tf">
                CONCAT('<a href="https://www.uniprot.org/uniprot/', u.id, '" target="_blank">', u.id,'</a>') AS "Uniprot;<quick visible='true' />",
                u.gene_name AS "Gene;<quick visible='true' />",
@@ -96,11 +117,11 @@ gtrd_current.files_info:
             IF( f.format = 'bigBed' OR f.format = 'bigWig',
                 '<a href="http://genome.ucsc.edu/cgi-bin/hgTracks?db=' || f.assembly || '&hgct_customText=' || f.path || '" target="_blank">UCSC</a>',
                 '') AS "Genome browser"
-          
-          FROM ${INFO_SCHEMA}.files_info f
-          <if parameter="has_tf">   LEFT JOIN ${INFO_SCHEMA}.uniprot u ON u.id=f.target       </if>
-          <if parameter="has_cell"> LEFT JOIN ${INFO_SCHEMA}.cells c ON c.id = f.cell_id      </if>
-          <if parameter="has_exp">  LEFT JOIN ${INFO_SCHEMA}.experiments e ON e.id = f.exp_id </if>
+
+          FROM files_info f
+          <if parameter="has_tf">   LEFT JOIN uniprot u ON u.id=f.target       </if>
+          <if parameter="has_cell"> LEFT JOIN cells c ON c.id = f.cell_id      </if>
+          <if parameter="has_exp">  LEFT JOIN experiments e ON e.id = f.exp_id </if>
 
           WHERE (1=1)
 
@@ -109,19 +130,19 @@ gtrd_current.files_info:
           </if>
 
           <if parameter="experiment">
-             AND f.exp_design = <parameter:experiment/> 
+             AND f.exp_design = <parameter:experiment/>
           </if>
 
           <if parameter="data">
-             AND f.data_type = <parameter:data/> 
+             AND f.data_type = <parameter:data/>
           </if>
 
           <if parameter="peackcaller">
-             AND f.peakcaller = <parameter:data/> 
+             AND f.peakcaller = <parameter:data/>
           </if>
 
           <if parameter="cell">
-             AND ( c.title LIKE '%<parameter:cell/>%')  
+             AND ( c.title LIKE '%<parameter:cell/>%')
           </if>
 
           ${search_tf}
@@ -139,11 +160,11 @@ gtrd_current.files_info:
             f.species AS "Species",
             f.exp_design AS "Experiment type",
             dt.name AS "Data type",
-            f.peakcaller AS "Peak caller", 
+            f.peakcaller AS "Peak caller",
             f.num AS "#;<aggregate function='SUM' type='Number' format='###,###,###,##0.' cssClass='total' />",
-            
-            '<a href="#!table/gtrd_current.files_info/List' 
-            || '/species=' || f.species 
+
+            '<a href="#!table/files_info/List'
+            || '/species=' || f.species
             || '/experiment=' || f.exp_design
             || '/data=' || f.data_type
             || IF(f.peakcaller != null AND f.peakcaller != 'MACS2,GEM,PICS,SISSRS', '/peakcaller=' || peakcaller, '')
@@ -151,8 +172,8 @@ gtrd_current.files_info:
             || '/has_experiment=true/has_cell=true'
             || '">list</a>' AS "Details"
 
-          FROM ${INFO_SCHEMA}.files_info_stats f
-          LEFT JOIN ${INFO_SCHEMA}.data_types dt ON dt.id = f.data_type
+          FROM files_info_stats f
+          LEFT JOIN data_types dt ON dt.id = f.data_type
           WHERE (1=1)
           <if parameter="species">    AND f.species    = '<parameter:species/>'    </if>
           <if parameter="experiment"> AND f.exp_design = '<parameter:experiment/>' </if>
@@ -170,4 +191,3 @@ gtrd_current.files_info:
       roles: '@AllRoles'
       layout: '{"title":""}'
       file: operations.FileStatisticsFilter.groovy
-        

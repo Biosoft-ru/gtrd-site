@@ -32,7 +32,7 @@ class TSSTableBox extends Component
 	const location =  tss.Chromosome.value + ": " + tss.Start.value.toLocaleString() + " - " 
 	                                              + tss.End.value.toLocaleString()   + " (" + tss.Strand.value + ")"; 
 
-    const tableRef    = '#!table/gtrd_current.cage_peaks_/';
+    const tableRef    = '#!table/cage_peaks_/';
     const params      = '/genome=' + tss.Genome.value + '/species=' + tss.Species.value + '/id=' + tss.ID.value;
 	const locationRef = '/chromosome=' + tss.Chromosome.value + '/start=' + tss.Start.value + '/end=' + tss.End.value
 

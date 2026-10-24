@@ -1,0 +1,69 @@
+stats_cells2experiments:
+  type: table
+  displayName: Statistics
+  order: '20'
+  primaryKey: cell_id
+  doc: Aggregated counts of experiments per cell line, by experiment type and control status.
+
+  scheme:
+    columns:
+    - cell_id:
+        type: INT
+        primaryKey: true
+        doc: Cell line identifier (reference to cells.id)
+    - chip_seq:
+        type: INT
+        defaultValue: 0
+        doc: Number of ChIP-seq experiments
+    - chip_seq_control:
+        type: INT
+        defaultValue: 0
+        doc: Number of ChIP-seq control experiments
+    - chip_exo:
+        type: INT
+        defaultValue: 0
+        doc: Number of ChIP-exo experiments
+    - chip_exo_control:
+        type: INT
+        defaultValue: 0
+        doc: Number of ChIP-exo control experiments
+    - histone_marks:
+        type: INT
+        defaultValue: 0
+        doc: Number of histone mark experiments
+    - histone_marks_control:
+        type: INT
+        defaultValue: 0
+        doc: Number of histone mark control experiments
+    - dnase_seq:
+        type: INT
+        defaultValue: 0
+        doc: Number of DNase-seq experiments
+    - atac_seq:
+        type: INT
+        defaultValue: 0
+        doc: Number of ATAC-seq experiments
+    - mnase_seq:
+        type: INT
+        defaultValue: 0
+        doc: Number of MNase-seq experiments
+    - faire_seq:
+        type: INT
+        defaultValue: 0
+        doc: Number of FAIRE-seq experiments
+    - tf_chip_seq:
+        type: INT
+        defaultValue: 0
+        doc: Number of TF ChIP-seq experiments
+    - tf_chip_exo:
+        type: INT
+        defaultValue: 0
+        doc: Number of TF ChIP-exo experiments
+    - rna_seq:
+        type: INT
+        defaultValue: 0
+        doc: Number of RNA-seq experiments
+    - cage_seq:
+        type: INT
+        defaultValue: 0
+        doc: Number of CAGE-seq experiments

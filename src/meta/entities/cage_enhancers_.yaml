@@ -1,4 +1,4 @@
-gtrd_current.cage_enhancers_:
+cage_enhancers_:
   type: table
   displayName: Enhancers
   order: '71'
@@ -9,19 +9,19 @@ gtrd_current.cage_enhancers_:
   - 'Homo sapiens':
       type: static
       roles: '@AllRoles'
-      value: gtrd_current.cage_enhancers_.redir?_qn_=List&genome=hg38&species=Homo sapiens
+      value: cage_enhancers_.redir?_qn_=List&genome=hg38&species=Homo sapiens
   - 'Mus musculus':
       type: static
       roles: '@AllRoles'
-      value: gtrd_current.cage_enhancers_.redir?_qn_=List&genome=mm10&species=Mus musculus
+      value: cage_enhancers_.redir?_qn_=List&genome=mm10&species=Mus musculus
   - 'Rattus norvegicus':
       type: static
       roles: '@AllRoles'
-      value: gtrd_current.cage_enhancers_.redir?_qn_=List&genome=rn6&species=Rattus norvegicus
+      value: cage_enhancers_.redir?_qn_=List&genome=rn6&species=Rattus norvegicus
   - 'Gallus gallus':
       type: static
       roles: '@AllRoles'
-      value: gtrd_current.cage_enhancers_.redir?_qn_=List&genome=galGal5&species=Gallus gallus
+      value: cage_enhancers_.redir?_qn_=List&genome=galGal5&species=Gallus gallus
 
   - 'List':
       type: 1D_unknown
@@ -32,7 +32,7 @@ gtrd_current.cage_enhancers_:
       - EnhancerFilter
       code: |-
           SELECT
-            '<a href="#!table/gtrd_current.cage_enhancers_/Details/genome=' || '<parameter:genome/>' ||
+            '<a href="#!table/cage_enhancers_/Details/genome=' || '<parameter:genome/>' ||
             '/species=' || '<parameter:species/>'  ||
             '/id=' || id || '">' || id || '</a>' AS "ID",
             

@@ -1,18 +1,7 @@
-<#assign SOURCE="gtrd_v1903">
-<#assign TARGET="gtrd_current">
-
-DROP TABLE IF EXISTS ${TARGET}.database_info;
-CREATE TABLE ${TARGET}.database_info
-(
-  id VARCHAR(50) NOT NULL,
-  species VARCHAR(50) NOT NULL,
-  name VARCHAR(50) NOT NULL,
-  link VARCHAR(200),
-  order_ INT NOT NULL
-);
+DELET FROM database_info;
 
 <#macro database order, species, database_id, name, link>
-INSERT INTO ${TARGET}.database_info values(${database_id?str}, ${species?str}, ${name?str}, ${link?str}, ${order});
+INSERT INTO database_info values(${database_id?str}, ${species?str}, ${name?str}, ${link?str}, ${order});
 </#macro>
 
 <@database 1,  "Homo sapiens",      "hgnc_id",              "HGNC, gene",          "<a href=https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/" />
@@ -29,5 +18,5 @@ INSERT INTO ${TARGET}.database_info values(${database_id?str}, ${species?str}, $
 
 <@database 90, "",                  "fantom5_name",         "FANTOM5, promoter",   "" />
 
-CREATE INDEX database_info_db      ON ${TARGET}.database_info(id);
-CREATE INDEX database_info_species ON ${TARGET}.database_info(species);
+CREATE INDEX database_info_db      ON database_info(id);
+CREATE INDEX database_info_species ON database_info(species);

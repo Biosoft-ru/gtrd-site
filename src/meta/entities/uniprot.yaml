@@ -1,0 +1,49 @@
+uniprot:
+  type: table
+  displayName: UniProt
+  order: '20'
+  primaryKey: id
+  doc: UniProt entries for transcription factors or cofactors referenced by GTRD experiments, with names, gene names, species and review status.
+
+  scheme:
+    columns:
+    - id:
+        type: VARCHAR(10)
+        primaryKey: true
+        doc: UniProt protein accession identifier
+    - name:
+        type: TEXT
+        canBeNull: true
+        doc: Full name of the protein entry
+    - protein_names:
+        type: TEXT
+        canBeNull: true
+        doc: List of protein names (recommended and alternative names)
+    - gene_names:
+        type: TEXT
+        canBeNull: true
+        doc: List of gene names (recommended and alternative names)
+    - protein_name:
+        type: TEXT
+        canBeNull: true
+        doc: Recommended protein name
+    - gene_name:
+        type: TEXT
+        canBeNull: true
+        doc: Recommended gene name
+    - species:
+        type: VARCHAR(30)
+        canBeNull: true
+        doc: Scientific name of the species
+    - status:
+        type: ENUM('reviewed', 'unreviewed')
+        canBeNull: true
+        doc: Entry review status (reviewed or unreviewed)
+    - cached_tf_class:
+        type: VARCHAR(30)
+        canBeNull: true
+        doc: Cached transcription factor class
+
+    indices:
+    - species:
+        columns: species

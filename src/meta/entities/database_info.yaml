@@ -1,0 +1,30 @@
+database_info:
+  type: table
+  displayName: Database info
+  order: '10'
+  doc: External databases and their links used for gene/transcript annotation in GTRD.
+
+  scheme:
+    columns:
+    - id:
+        type: VARCHAR(50)
+        doc: Database identifier (e.g. ensembl_gene_id, entrez_gene_id)
+    - species:
+        type: VARCHAR(50)
+        doc: Species for this database entry (empty for universal databases)
+    - name:
+        type: VARCHAR(50)
+        doc: Human-readable database name
+    - link:
+        type: VARCHAR(200)
+        canBeNull: true
+        doc: URL prefix for linking to the external database
+    - order_:
+        type: INT
+        doc: Display order
+
+    indices:
+    - database_info_db:
+        columns: id
+    - database_info_species:
+        columns: species

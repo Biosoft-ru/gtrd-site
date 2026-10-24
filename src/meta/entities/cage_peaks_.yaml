@@ -1,4 +1,4 @@
-gtrd_current.cage_peaks_:
+cage_peaks_:
   type: table
   displayName: TSS
   order: '70'
@@ -9,19 +9,19 @@ gtrd_current.cage_peaks_:
   - 'Homo sapiens':
       type: static
       roles: '@AllRoles'
-      value: gtrd_current.cage_peaks_.redir?_qn_=Transcription start sites&genome=hg38
+      value: cage_peaks_.redir?_qn_=Transcription start sites&genome=hg38
   - 'Mus musculus':
       type: static
       roles: '@AllRoles'
-      value: gtrd_current.cage_peaks_.redir?_qn_=Transcription start sites&genome=mm10
+      value: cage_peaks_.redir?_qn_=Transcription start sites&genome=mm10
   - 'Rattus norvegicus':
       type: static
       roles: '@AllRoles'
-      value: gtrd_current.cage_peaks_.redir?_qn_=Transcription start sites&genome=rn6
+      value: cage_peaks_.redir?_qn_=Transcription start sites&genome=rn6
   - 'Gallus gallus':
       type: static
       roles: '@AllRoles'
-      value: gtrd_current.cage_peaks_.redir?_qn_=Transcription start sites&genome=galGal5
+      value: cage_peaks_.redir?_qn_=Transcription start sites&genome=galGal5
 
 
   - 'Transcription start sites':
@@ -33,7 +33,7 @@ gtrd_current.cage_peaks_:
       - TssFilter
       code: |-
           SELECT
-            '<a href="#!table/gtrd_current.cage_peaks_/Details/genome=' || '<parameter:genome/>' || '/id=' || id 
+            '<a href="#!table/cage_peaks_/Details/genome=' || '<parameter:genome/>' || '/id=' || id 
             || '">' || id || '</a>' AS "ID",
             
             cp.organism AS "Species;<quick visible='false' />", 
@@ -146,7 +146,7 @@ gtrd_current.cage_peaks_:
       layout: '{"hideTitle":"true", "filterUI":"no"}'
       code: |-
           SELECT
-            '<a href=#!table/gtrd_current.cells/Details/ID=' || c.id || '>' || c.title || '</a>' AS "Cell type", 
+            '<a href=#!table/cells/Details/ID=' || c.id || '>' || c.title || '</a>' AS "Cell type", 
             ex.treatment AS "Treatment",
             pe.value AS "Value",
 

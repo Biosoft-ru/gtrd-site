@@ -4,6 +4,10 @@ connectionProfiles:
       connectionUrl: jdbc:mysql://localhost:3306/gtrd_current?zeroDateTimeBehavior=convertToNull&sessionVariables=sql_mode=''
       username: gtrd
       password: gtrd
+    wsl_mysql:
+      connectionUrl: jdbc:mysql://172.30.128.1:3306/gtrd_current?zeroDateTimeBehavior=convertToNull&sessionVariables=sql_mode=''
+      username: gtrd
+      password: gtrd
     local_postgresql:
       connectionUrl: jdbc:postgresql://localhost:5432/gtrd
       username: gtrd

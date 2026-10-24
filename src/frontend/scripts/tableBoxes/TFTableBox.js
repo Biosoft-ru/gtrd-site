@@ -33,7 +33,7 @@ class TFTableBox extends Component
     this.title = tf.PageTitle.value;
     be5.ui.setTitle(this.title);
 
-    const tableRef = '#!table/gtrd_current.';
+    const tableRef = '#!table/';
 
   	const steps = [
 		{title: "Experiments", 	  url: tableRef + 'experiments/ForCell/chip=seq/cell_id='       + tf.uniprot.value},

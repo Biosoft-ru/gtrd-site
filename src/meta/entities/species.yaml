@@ -1,0 +1,23 @@
+species:
+  type: dictionary
+  displayName: Species
+  order: '20'
+  doc: Species present in the GTRD database, with optional two-letter short codes.
+  scheme:
+    columns:
+    - name:
+        type: VARCHAR(32)
+        doc: Scientific name of the species
+    - short_name:
+        type: VARCHAR(2)
+        canBeNull: true
+        doc: Two-letter short code of the species (e.g. hs, mm)
+
+  queries:
+  - '*** Selection view ***':
+      type: 1D_unknown
+      code: |-
+          SELECT 
+            s.species AS "CODE", s.species AS "Name"
+          FROM species s
+          ORDER BY 1

@@ -24,19 +24,19 @@ class ExperimentFilter extends FilterOperation
 			map.put("type", type)
 
         dps.add("species", "Species") {
-            TAG_LIST_ATTR = queries.getTagsFromSelectionView("gtrd_current.species")
+            TAG_LIST_ATTR = queries.getTagsFromSelectionView("species")
             RELOAD_ON_CHANGE = true
         }
 
 		dps.add("type", "Type") {
-			TAG_LIST_ATTR = queries.getTagsFromSelectionView("gtrd_current.experiment_types", map)
+			TAG_LIST_ATTR = queries.getTagsFromSelectionView("experiment_types", map)
 			RELOAD_ON_CHANGE = true
 		}
 
 		if (species != null)
 		{
 			dps.add("cell_id", "Cells") 
-			{TAG_LIST_ATTR = queries.getTagsFromCustomSelectionView("gtrd_current.experiments", "Select cells for species and type",  map) }
+			{TAG_LIST_ATTR = queries.getTagsFromCustomSelectionView("experiments", "Select cells for species and type",  map) }
 		}
 		
 		if ( type != null && type.startsWith("ChIP") )

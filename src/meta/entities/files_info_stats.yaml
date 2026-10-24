@@ -1,0 +1,28 @@
+files_info_stats:
+  type: table
+  displayName: Downloads - stats
+  order: '51'
+  doc: Aggregated statistics about data files, grouped by species, experiment design, data type, and peak caller.
+  scheme:
+    columns:
+    - species:
+        type: VARCHAR(50)
+        canBeNull: true
+        doc: Species
+    - exp_design:
+        type: VARCHAR(100)
+        canBeNull: true
+        doc: Experimental design type
+    - data_type:
+        type: VARCHAR(100)
+        canBeNull: true
+        doc: Data type (reference to data_types.id)
+    - peakcaller:
+        type: VARCHAR(100)
+        canBeNull: true
+        doc: Peak caller used
+    - num:
+        type: INT
+        canBeNull: false
+        defaultValue: 0
+        doc: Number of files
