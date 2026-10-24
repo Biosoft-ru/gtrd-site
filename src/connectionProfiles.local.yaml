@@ -1,0 +1,11 @@
+connectionProfiles:
+  profiles:
+    local_mysql:
+      connectionUrl: jdbc:mysql://localhost:3306/gtrd_current?zeroDateTimeBehavior=convertToNull&sessionVariables=sql_mode=''
+      username: gtrd
+      password: gtrd
+    local_postgresql:
+      connectionUrl: jdbc:postgresql://localhost:5432/gtrd
+      username: gtrd
+      password: gtrd
+      

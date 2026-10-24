@@ -1,0 +1,49 @@
+<!doctype html>
+<html th:lang="${lang}" lang="en">
+<head>
+    <meta charset="utf-8">
+    <base th:href="${baseUrl}" href="/">
+    <title th:text="${title}">React App</title>
+    <meta name="description" th:attr="content=${description}"  content="" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
+
+    <style type="text/css">.document-loader{height:3px;width:100%;position:absolute;top:0;left:0;overflow:hidden;background-color: transparent}
+    .document-loader:before{display:block;position:absolute;content:"";left:0;width:10%;height:3px;background-color:#40CCCC;
+        animation:loading 10s linear infinite}@keyframes loading{from{left:-50%;width:30%}50%{width:30%}70%{width:70%}80%{left:50%}95%{left:120%}to{left:100%}}</style>
+</head>
+<body>
+    <div id="infoMessage" th:text="${message}"></div>
+    <div id="app"><div class="document-loader"/></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.14.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.14.0/umd/react-dom.production.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/locale/ru.js"></script>
+
+    <!-- Start of StatCounter Code for Default Guide -->
+    <script type="text/javascript">
+        var sc_project = 11085103;
+        var sc_invisible = 1;
+        var sc_security = "96d74c69";
+        var scJsHost = (("https:" == document.location.protocol) ? "https://secure." : "http://www.");
+        const script = document.createElement('script');
+        script.src = scJsHost + "statcounter.com/counter/counter.js";
+        document.body.appendChild(script);
+    </script>
+    <noscript>
+        <div class="statcounter"><a title="web counter" href="http://statcounter.com/" target="_blank">
+            <img class="statcounter" src="//c.statcounter.com/11085103/0/96d74c69/1/" alt="webcounter"></a>
+        </div>
+    </noscript>
+    <!-- End of StatCounter Code for Default Guide -->
+</body>
+</html>

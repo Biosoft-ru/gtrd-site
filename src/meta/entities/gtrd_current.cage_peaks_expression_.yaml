@@ -1,0 +1,20 @@
+gtrd_current.cage_peaks_expression_:
+  type: table
+  primaryKey: dummy
+  displayName: TSS expression
+  order: '72'
+  scheme:
+    columns:
+    - id:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - peak_id:
+        type: KEYTYPE
+    - exp_id:
+        type: VARCHAR(10)
+        canBeNull: true
+    - value:
+        type: decimal(22,10)
+        canBeNull: true
+        

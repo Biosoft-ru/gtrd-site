@@ -1,0 +1,12 @@
+_gtrd_page_:
+  type: table
+  displayName: GTRD
+  order: '20'
+  primaryKey: dummy
+  queries:
+    - All records:
+        defaultView: true
+        invisible: true
+        type: static
+        roles: '@AllRoles'
+        value: gtrd.be

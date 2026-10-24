@@ -1,0 +1,15 @@
+gtrd_current.external_refs:
+  type: table
+  displayName: External references
+  order: '20'
+  scheme:
+    columns:
+    - id:
+        type: VARCHAR(20)
+        primaryKey: true
+    - external_db:
+        type: VARCHAR(10)
+        canBeNull: true
+    - external_db_id:
+        type: TEXT
+        canBeNull: true

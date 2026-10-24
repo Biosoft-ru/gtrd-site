@@ -1,0 +1,39 @@
+gtrd_current.data_types:
+  type: table
+  displayName: Experiment types
+  order: '10'
+  primaryKey: id
+  scheme:
+    columns:
+    - id:
+        type: VARCHAR(20)
+    - name:
+        type: VARCHAR(20)
+    - description:
+        type: TEXT
+    - order_:
+        type: INT
+  
+  queries:
+  - Selection for experiment type:
+      type: 1D_unknown
+      invisible: true
+      roles: '@AllRoles'
+      code: |-
+          SELECT 
+            d.id AS "Code",
+            d.name AS "Name"
+          FROM ${INFO_SCHEMA}.experiment2data_types e
+          LEFT JOIN ${INFO_SCHEMA}.data_types d ON d.id = e.data_type
+          WHERE (1=1)
+          <if parameter="species">
+            AND e.species = '<parameter:species/>'
+          </if>
+
+          <if parameter="experiment">
+             AND e.experiment_type = '<parameter:experiment/>' 
+          </if>
+          
+          GROUP BY 1
+          ORDER BY d.order_
+        

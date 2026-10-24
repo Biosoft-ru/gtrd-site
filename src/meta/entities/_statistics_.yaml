@@ -1,0 +1,10 @@
+_statistics_:
+  type: table
+  displayName: Statistics
+  order: '100'
+  primaryKey: dummy
+  queries:
+  - 'File to downloads':
+      type: static
+      roles: '@AllRoles'
+      value: gtrd_current.files_info.redir?_qn_=Statistics

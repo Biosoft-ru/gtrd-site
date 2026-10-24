@@ -1,0 +1,10 @@
+users:
+  queries:
+    - All records:
+        roles: [Administrator]
+    - Login:
+        roles: -Guest
+  operations:
+    - TopFilter:
+        layout: '{"properties":"user_name","title":""}'
+

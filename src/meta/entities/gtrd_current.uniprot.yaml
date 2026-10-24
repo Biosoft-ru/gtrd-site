@@ -1,0 +1,9 @@
+gtrd_current.uniprot:
+  type: table
+  displayName: Species
+  order: '20'
+  scheme:
+    columns:
+    - species:
+        type: VARCHAR(50)
+        primaryKey: true

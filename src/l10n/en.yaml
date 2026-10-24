@@ -1,0 +1,45 @@
+en:
+  entities:
+  - index:
+    - topics: page
+      entries:
+      - title: gtrd
+      - description:
+  - _homepage_:
+    - topics: displayName
+      entries:
+      - homepage: homepage
+  - _logout_:
+    - topics: displayName
+      entries:
+      - Logout: Logout
+  - users:
+    - topics: displayName
+      entries:
+      - Logout: Users
+    - topics: viewName
+      entries:
+      - Login: Sign in
+  - query.jsp:
+    - topics: page
+      entries:
+      - Active From: Active from
+      - Active To: Active to
+      - Class: Class
+      - Fio: Full name
+      - Prev: Previous
+      - amount: amount
+      - birthDay: Birth date
+      - changeDate: Change date
+      - 'no': no
+      - 'yes': yes
+  - testtable:
+    - topics: operationName
+      entries:
+      - TestOperation:
+      - Delete: Delete
+      - Edit: Edit
+      - Insert: Insert
+    - topics: viewName
+      entries:
+      - All records: All records

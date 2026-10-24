@@ -1,0 +1,17 @@
+gtrd_current.species:
+  type: dictionary
+  displayName: Species
+  order: '20'
+  scheme:
+    columns:
+    - species:
+        type: VARCHAR(50)
+        primaryKey: true
+         
+  queries:
+  - '*** Selection view ***':
+      type: 1D
+      code: |-
+          SELECT species AS "CODE", species AS "Name"
+          FROM ${INFO_SCHEMA}.species
+          ORDER BY 1

@@ -1,0 +1,98 @@
+@startuml
+hide circle
+
+   entity "annotation_queue" as annotation_queue {
+      id : int(11)
+      gse_id : varchar(10)
+      species : varchar(100)
+      path : varchar(100)
+      status : varchar(10)
+      annotator : varchar(20)
+   }
+
+   entity "event_history" as event_history {
+      id : bigint(20)
+      exp_id : varchar(100)
+      start_date : datetime
+      end_date : datetime
+      event_id : varchar(200)
+      state : varchar(100)
+      parameters : varchar(1000)
+   }
+
+   entity "cells" as cells {
+      id : int(11)
+      title : mediumtext
+      cellosaurus_id : varchar(60)
+      species : varchar(32)
+      cell_ontology_id : varchar(40)
+      exp_factor_ontology_id : varchar(60)
+      uberon_id : varchar(255)
+      source : tinytext
+      source_id : varchar(255)
+      cell_type_id : varchar(255)
+      brenda_id : varchar(30)
+      other_id : varchar(30)
+   }
+
+   entity "chip_experiments" as chip_experiments {
+      id : varchar(20)
+      antibody : mediumtext
+      specie : varchar(50)
+      treatment : mediumtext
+      control_id : varchar(20)
+      cell_id : int(11)
+      experiment_type : enum('chip_control','bio_control','normal','unspecified')
+      tf_uniprot_id : varchar(10)
+   }
+
+
+   entity "external_refs" as external_refs {
+      id : varchar(20)
+      external_db : varchar(10)
+      external_db_id : text
+   }
+
+   entity "geo_series_rejected" as geo_series_rejected {
+      geo_series_id : varchar(10)
+      reject_reason : text
+      annotator : text
+   }
+
+   entity "hub" as hub {
+      input : varchar(20)
+      input_type : varchar(30)
+      output : varchar(20)
+      output_type : varchar(30)
+      specie : varchar(50)
+   }
+
+   entity "properties" as properties {
+      id : varchar(20)
+      property_name : varchar(20)
+      property_value : mediumtext
+   }
+
+   entity "uniprot" as uniprot {
+      id : varchar(10)
+      name : text
+      protein_names : text
+      gene_names : text
+      protein_name : text
+      gene_name : text
+      species : varchar(30)
+      status : enum('reviewed','unreviewed')
+      cached_tf_class : varchar(30)
+   }
+
+   hub::input <-- properties::id
+   hub::output <-- annotation_queue::id
+   hub::output <-- chip_experiments::id
+   chip_experiments::id <-- chip_experiments::control_id
+   hub::output <-- external_refs::id
+   cells::id <-- chip_experiments::cell_id
+   uniprot::id <-- chip_experiments::tf_uniprot_id
+   external_refs::external_db_id <-- geo_series_rejected::geo_series_id
+   hub::output <-- event_history::exp_id
+   external_refs::external_db_id <-- event_history::exp_id
+@enduml

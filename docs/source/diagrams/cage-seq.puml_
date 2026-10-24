@@ -1,0 +1,65 @@
+   hide circle
+   skinparam linetype ortho
+
+   entity "cage_peaks_xx" as peaks {
+     *id : int(10)
+     --
+     chrom : varchar(10)
+     start : int(10)
+     end : int(10) unsigned 
+     strand : char(1)
+     abs_summit : int(10)
+     name : mediumtext
+     type : varchar(255)
+     organism : varchar(50)
+     gene_symbol : mediumtext
+     enhancer_id : int(10)
+     fantom5_id : mediumtext
+     version : int(10)
+     source : varchar(255)
+   }
+
+   entity "cage_peaks_expression_xx" as expression {
+     peak_id: int(10)
+     experiment_id: int(10)
+     value : float
+   }
+
+   entity "cage_promoters_annotation_xx" as annotation {
+     peak_id: int(10)
+     external_db: varchar(30)
+     external_db_id: mediumtext
+   }
+
+   entity "cage_promoters2transcripts_xx" as transcripts {
+     peak_id: int(10)
+     ensembl_transcript_id: varchar(30)
+     distance: int(11)
+   }
+
+   entity "cage_enhancers_xx" as enhancers {
+     *id : int(10)
+     --
+     chrom : varchar(10)
+     start : int(10)
+     end : int(10) unsigned 
+     type : varchar(255)
+     name : mediumtext
+   }
+
+   entity "cage_enhancers2genes_xx" as enhancers2genes {
+     enhancer_id : int(10)
+     ensembl_gene_id : varchar(20)
+     type : enum('corr','prox')
+     distance : int(11)
+     corr : float
+     padj : float
+   }
+
+   peaks }o..|| annotation
+   peaks }o..|| transcripts
+   peaks }o..|| enhancers
+   peaks }o..|| expression
+   enhancers }o..|| enhancers2genes
+
+

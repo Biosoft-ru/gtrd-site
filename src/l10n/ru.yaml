@@ -1,0 +1,42 @@
+ru:
+  entities:
+  - index:
+    - topics: page
+      entries:
+      - title: gtrd
+      - description:
+  - _homepage_:
+    - topics: displayName
+      entries:
+      - homepage: Главная
+  - _logout_:
+    - topics: displayName
+      entries:
+      - Logout: Выход
+  - users:
+    - topics: displayName
+      entries:
+      - Logout: Пользователи
+    - topics: viewName
+      entries:
+      - Login: Вход
+  - query.jsp:
+    - topics: page
+      entries:
+      - Active From: Дата начала
+      - Active To: Дата окончания
+      - Class: Класс
+      - Fio: Ф.И.О.
+      - Prev: Предыдущая
+      - amount: Сумма
+      - birthDay: Дата рожд.
+      - changeDate: Дата изменения
+      - 'no': нет
+      - 'yes': да
+  - gtrd_current.cells:
+    - topics: operationName
+      entries:
+      - Filter: Фильтр
+    - topics: viewName
+      entries:
+      - All records: Все записи

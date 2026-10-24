@@ -1,0 +1,93 @@
+#stats {
+    max-width: 400px;
+}
+
+#citations {
+    height: 400px;
+    overflow: scroll;
+}
+
+.carousel-indicators li {
+    background-color: #c7e0f9;
+}
+
+.carousel-indicators .active {
+    background-color: #3e7fc1;
+}
+
+.carousel-control.left, .carousel-control.right {
+    background-image: none
+}
+
+#prev-release-btn {
+    float: right;
+}
+
+#version {
+    float: right;
+}
+
+.badge-new {
+    background-image: linear-gradient(to bottom, #5cb85c 0px, #419641 100%);
+}
+
+.prev_version {
+    color: gray;
+    font-size: 85%;
+}
+
+.gtrd-page-th {
+    text-align: center;
+}
+
+.gtrd-page-td {
+    text-align: right;
+}
+
+.species_col {
+    text-align: left;
+    font-style: italic;
+}
+
+.gtrd-page-ul {
+    list-style-position: inside;
+    text-align: left;
+}
+
+#learn-more-btn,
+#prev-release-btn {
+    color: #333;
+}
+
+.accordion-menu > a {
+    display: block;
+    position: relative;
+    padding-left: 1em;
+    color: #212529 !important;
+}
+
+.accordion-menu > a:hover {
+    text-decoration: underline !important;
+}
+
+.accordion-menu a[aria-expanded="false"]::before,
+.accordion-menu a[aria-expanded="true"]::before {
+    display: inline-block;
+    content: "";
+    /*chevron right*/
+    /*background-image: url("data:image/svg+xml,<svg viewBox='0 0 16 16' fill='inherit' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z' clip-rule='evenodd'/></svg>");*/
+    background-image: url("data:image/svg+xml,<svg viewBox='0 0 16 16' fill='inherit' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z' clip-rule='evenodd'/></svg>");
+    background-repeat: no-repeat;
+    background-size: 1rem 1rem;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: middle;
+    margin-right: 0.2em;
+    margin-bottom: 0.1em;
+
+}
+.accordion-menu a[aria-expanded="true"]::before {
+    background-image: url("data:image/svg+xml,<svg viewBox='0 0 16 16' fill='inherit' xmlns='http://www.w3.org/2000/svg'><path fill-rule='evenodd' d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z' clip-rule='evenodd'/></svg>");
+
+
+}

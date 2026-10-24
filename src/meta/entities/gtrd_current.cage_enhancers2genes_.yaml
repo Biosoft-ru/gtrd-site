@@ -1,0 +1,4 @@
+gtrd_current.cage_enhancers2genes_:
+  type: table
+  displayName: Regulated genes
+  order: '72'

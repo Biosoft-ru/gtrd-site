@@ -1,0 +1,4 @@
+gtrd_current.cage_promoters2transcripts_:
+  type: table
+  displayName: TSS and nearest transcripts
+  order: '70'

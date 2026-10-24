@@ -1,0 +1,4 @@
+gtrd_current.cage_promoters_annotation_:
+  type: table
+  displayName: TSS_annotation
+  order: '70'

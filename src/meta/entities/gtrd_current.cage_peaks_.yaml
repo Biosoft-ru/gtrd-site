@@ -1,0 +1,169 @@
+gtrd_current.cage_peaks_:
+  type: table
+  displayName: TSS
+  order: '70'
+  primaryKey: id
+ 
+  queries:
+
+  - 'Homo sapiens':
+      type: static
+      roles: '@AllRoles'
+      value: gtrd_current.cage_peaks_.redir?_qn_=Transcription start sites&genome=hg38
+  - 'Mus musculus':
+      type: static
+      roles: '@AllRoles'
+      value: gtrd_current.cage_peaks_.redir?_qn_=Transcription start sites&genome=mm10
+  - 'Rattus norvegicus':
+      type: static
+      roles: '@AllRoles'
+      value: gtrd_current.cage_peaks_.redir?_qn_=Transcription start sites&genome=rn6
+  - 'Gallus gallus':
+      type: static
+      roles: '@AllRoles'
+      value: gtrd_current.cage_peaks_.redir?_qn_=Transcription start sites&genome=galGal5
+
+
+  - 'Transcription start sites':
+      type: 1D_unknown
+      invisible: true
+      roles: '@AllRoles'
+      layout: '{"topForm":"TssFilter","quickType":"select","filterUI":"no"}'
+      operations:
+      - TssFilter
+      code: |-
+          SELECT
+            '<a href="#!table/gtrd_current.cage_peaks_/Details/genome=' || '<parameter:genome/>' || '/id=' || id 
+            || '">' || id || '</a>' AS "ID",
+            
+            cp.organism AS "Species;<quick visible='false' />", 
+            cp.chrom AS "Chromosome",
+            cp.`start` AS "Start",
+            cp.`end` AS "End",
+            cp.strand AS "Strand",
+            cp.abs_summit AS "TSS",
+            cp.type AS "Type",
+            
+            cp.gene_symbol AS "Gene",
+            cp.enhancer_id AS "Enhancer",
+            cp.fantom5_id AS "FANTOM5 id",
+            
+            cp.name AS "Name;<quick visible='false' />", 
+            cp.source AS "Source;<quick visible='true' />", 
+            cp.version AS "Version;<quick visible='false' />" 
+          FROM ${INFO_SCHEMA}.cage_peaks_<parameter:genome/> cp 
+          WHERE 1=1 
+
+          <if parameter="type" value="promoter">     AND cp.type = 'promoter' </if>
+          <if parameter="type" value="enhancer">     AND cp.type = 'enhancer' </if>
+          <if parameter="type" value="unclassified"> AND cp.type = ''         </if>
+
+          <if parameter="chromosome"> AND cp.chrom    = '<parameter:chromosome/>' </if>
+          <if parameter="start">      AND cp.`start` >= <parameter:start/>        </if>
+          <if parameter="end">        AND cp.`start` <= <parameter:end/>          </if>
+
+          <if parameter="gene">       AND cp.gene_symbol = '<parameter:gene/>'  </if>
+          
+          <if parameter="source">  AND cp.source = '<parameter:source/>' </if>
+          <if parameter="fantom5"> AND cp.fantom5_id LIKE '%<parameter:fantom5/>%' </if>
+
+          ORDER BY chrom, `start`, `end`, strand      
+
+  - 'Details':
+      type: 1D_unknown
+      invisible: true
+      roles: '@AllRoles'
+      layout: '{"tableBox":"tssDetails", "mode":"named", "hideTitle":"true"}'
+      code: |-
+          SELECT
+            id AS "ID",
+            'TSS: ' || id || ' - ' || cp.type AS "PageTitle",
+         
+            cp.organism AS "Species",
+            '<parameter:genome/>' AS "Genome",
+             
+            cp.chrom AS "Chromosome",
+            cp.`start` AS "Start",
+            cp.`end` AS "End",
+            cp.strand AS "Strand",
+            cp.abs_summit AS "Summit",
+            cp.type AS "Type",
+            
+            cp.gene_symbol AS "Gene",
+            cp.enhancer_id AS "Enhancer",
+            cp.fantom5_id AS "FANTOM5",
+            
+            cp.name AS "Name", 
+            cp.source AS "Source", 
+            cp.version AS "Version" 
+
+          FROM ${INFO_SCHEMA}.cage_peaks_<parameter:genome/> cp 
+          WHERE id=<parameter:id/>
+      
+  - 'Annotation':
+      type: 1D_unknown
+      invisible: true
+      roles: '@AllRoles'
+      layout: '{"hideTitle":"true"}'
+      code: |-
+          SELECT
+            IFNULL(info.name, a.external_db) AS "Database, entity",
+            
+            CASE
+               WHEN info.link is NULL OR info.link = '' THEN a.external_db_id
+               ELSE info.link || a.external_db_id || ' target="_blank">' || a.external_db_id || '</a>' 
+            END  AS "ID"
+
+          FROM ${INFO_SCHEMA}.cage_promoters_annotation_<parameter:genome/> a
+          LEFT JOIN ${INFO_SCHEMA}.database_info info ON info.id = a.external_db AND (info.species='' OR info.species='<parameter:species/>')     
+          WHERE peak_id=<parameter:id/> 
+          ORDER BY info.order_
+
+  - 'Transcripts':
+      type: 1D_unknown
+      invisible: true
+      roles: '@AllRoles'
+      layout: '{"hideTitle":"true"}'
+      code: |-
+          SELECT
+            info.link || t.ensembl_transcript_id || ' target="_blank">' || t.ensembl_transcript_id || '</a>' AS "Ensembl transcript",
+            t.distance AS "Distance",
+            
+            '<a href=http://genome.ucsc.edu/cgi-bin/hgTracks?db=' || '<parameter:genome/>'
+            || '&position=' || p.chrom || ':' || (p.start-500) || '-' || (p.end+500) 
+            || ' target="_blank">UCSC</a>' AS "Genome browser"
+             
+          FROM ${INFO_SCHEMA}.cage_promoters2transcripts_<parameter:genome/> t
+          JOIN ${INFO_SCHEMA}.cage_peaks_<parameter:genome/> p ON p.id=<parameter:id/>  
+          LEFT JOIN ${INFO_SCHEMA}.database_info info ON info.id = 'ensembl_trancript_id' AND info.species='<parameter:species/>'     
+          WHERE peak_id=<parameter:id/> 
+          ORDER BY t.distance
+
+  - 'Expression':
+      type: 1D_unknown
+      invisible: true
+      roles: '@AllRoles'
+      layout: '{"hideTitle":"true", "filterUI":"no"}'
+      code: |-
+          SELECT
+            '<a href=#!table/gtrd_current.cells/Details/ID=' || c.id || '>' || c.title || '</a>' AS "Cell type", 
+            ex.treatment AS "Treatment",
+            pe.value AS "Value",
+
+           '<a href=http://genome.ucsc.edu/cgi-bin/hgTracks?db=' || '<parameter:genome/>'
+           || '&position=' || '<parameter:chromosome/>' || ':' || (<parameter:start/>-500) || '-' || (<parameter:end/>+500) 
+           || ' target="_blank">UCSC</a>' AS "Genome browser"
+
+          FROM ${INFO_SCHEMA}.cage_peaks_expression_<parameter:genome/> pe
+          INNER JOIN ${INFO_SCHEMA}.experiments ex ON ex.id = pe.exp_id
+          LEFT  JOIN ${INFO_SCHEMA}.cells c ON c.id = ex.cell_id
+          WHERE pe.peak_id=<parameter:id/>  AND type='CAGE-seq'
+
+  operations:
+  - TssFilter:
+      type: Groovy
+      roles: '@AllRoles'
+      layout: '{"title":""}'
+      file: operations.TssFilter.groovy
+
+          

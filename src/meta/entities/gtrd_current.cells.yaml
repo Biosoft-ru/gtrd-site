@@ -1,0 +1,248 @@
+gtrd_current.cells:
+  type: table
+  displayName: Cells
+  order: '20'
+  primaryKey: id
+  scheme:
+    columns:
+    - id:
+        type: INT
+        primaryKey: true
+    - title:
+        type: TEXT
+    - cellosaurus_id:
+        type: VARCHAR(20)
+        canBeNull: true
+    - species:
+        type: VARCHAR(32)
+    - cell_ontology_id:
+        type: VARCHAR(20)
+        canBeNull: true
+    - exp_factor_ontology_id:
+        type: VARCHAR(20)
+        canBeNull: true
+    - uberon_id:
+        type: VARCHAR(20)
+        canBeNull: true
+    - source:
+        type: VARCHAR(255)
+        canBeNull: true
+    - source_id:
+        type: VARCHAR(255)
+        canBeNull: true
+    - cell_type_id:
+        type: VARCHAR(255)
+        canBeNull: true
+    - brenda_id:
+        type: VARCHAR(30)
+        canBeNull: true
+    - other_id:
+        type: VARCHAR(30)
+        canBeNull: true
+         
+  queries:
+  - '*** Selection view ***':
+      type: 1D
+      code: |-
+          select distinct c.id AS "CODE", c.title AS "Name"
+          from ${INFO_SCHEMA}.experiments join ${INFO_SCHEMA}.cells c on (cell_id=c.id)
+          where (1=1)
+          <if parameter="species">
+            AND specie = '<parameter:species/>'
+          </if>
+          <if parameter="id">
+            AND c.id = <parameter:id/>
+          </if>
+
+  - 'Selection for species':
+      type: 1D
+      code: |-
+          SELECT DISTINCT c.id AS "CODE", c.title AS "Name"
+          FROM ${INFO_SCHEMA}.chip_experiments 
+          INNER JOIN ${INFO_SCHEMA}.cells c ON (cell_id=c.id)
+          AND specie = '<parameter:species/>'
+
+  - Selection view species:
+      type: 1D_unknown
+      code: SELECT species as "CODE", species as "Name" FROM ${INFO_SCHEMA}.species
+
+  - with external links:
+      type: 1D_unknown
+      roles: '@AllRoles'
+      layout: '{"topForm":"CellFilter","quickType":"select","filterUI":"no"}'
+      operations:
+      - CellFilter
+      - Filter
+      code: |-
+          SELECT
+            c.id AS "ID;<quick visible='false' />",
+            c.species AS "Species;<quick visible='true' />",
+            c.title AS "Title",
+            '<link table="${INFO_SCHEMA}.cells" queryName="Details" using="ID" columns="ID" />' AS ";Title",
+            
+            COALESCE('<a href="https://web.expasy.org/cellosaurus/' || c.cellosaurus_id || '" target="_blank">' || c.cellosaurus_id || '</a><br/>') 
+            AS "Cellosaurus;<quick visible='true' />",
+            
+            COALESCE('<a href="http://purl.obolibrary.org/obo/' ||
+                     replace(COALESCE(c.cell_ontology_id, ''), ':', '_') || '" target="_blank">' || c.cell_ontology_id || '</a><br/>') 
+            AS "Cell ontology;<quick visible='true' />",
+                     
+            COALESCE('<a href="http://www.ebi.ac.uk/efo/' ||
+                     replace(COALESCE(c.exp_factor_ontology_id, ''), ':', '_') || '" target="_blank">' || c.exp_factor_ontology_id || '</a><br/>')
+            AS "Experimental factors ontology;<quick visible='true' />",
+            
+            COALESCE('<a href="http://purl.obolibrary.org/obo/' ||
+                     replace(COALESCE(c.uberon_id, ''), ':', '_') || '" target="_blank">' || c.uberon_id || '</a><br/>')
+            AS "UBERON;<quick visible='true' />",
+            
+            COALESCE('<a href="http://purl.obolibrary.org/obo/' ||
+                     replace(COALESCE(c.brenda_id, ''), ':', '_') || '" target="_blank">' || c.brenda_id || '</a><br/>')
+            AS "BRENDA cell ontology;<quick visible='true' />",
+            
+            c.other_id AS "Other refs",
+            c.source AS "Source;<quick visible='true' />",
+            source_id AS "Source id;<quick visible='true' />", 
+            cell_type_id AS "Cell type id;<quick visible='true' />"
+            
+          FROM ${INFO_SCHEMA}.cells c
+          
+          -- <if parameter="search">
+          -- AND MATCH(title, cellosaurus_id, cell_ontology_id, exp_factor_ontology_id, source, source_id, cell_type_id, brenda_id, other_id) AGAINST('<parameter:search/>', 
+          -- </if>
+          WHERE 1==1
+                
+  - with experiments:
+      type: 1D_unknown
+      roles: '@AllRoles'
+      layout: '{"topForm":"CellFilter","quickType":"select","filterUI":"no"}'
+      operations:
+      - CellFilter
+      - Filter
+      code: |-
+          SELECT
+            c.id AS "ID;<quick visible='false' />",
+            c.species AS "Species;<quick visible='false' />",
+            c.title AS "Title",
+            '<link table="${INFO_SCHEMA}.cells" queryName="Details" using="ID" columns="ID" />' AS ";Title",
+            
+            IF(c.cellosaurus_id = '', '', 
+               '<a href="https://web.expasy.org/cellosaurus/' || c.cellosaurus_id || '" target="_blank">' || c.cellosaurus_id || '</a><br/>') ||
+            IF(c.cell_ontology_id = '', '',
+                     '<a href="http://purl.obolibrary.org/obo/' ||
+                     replace(COALESCE(c.cell_ontology_id, ''), ':', '_') || '" target="_blank">' || c.cell_ontology_id || '</a><br/>') ||
+            IF(c.exp_factor_ontology_id = '', '',
+                     '<a href="http://www.ebi.ac.uk/efo/' ||
+                     replace(COALESCE(c.exp_factor_ontology_id, ''), ':', '_') || '" target="_blank">' || c.exp_factor_ontology_id || '</a><br/>') ||
+            IF(c.uberon_id = '', '',
+                     '<a href="http://purl.obolibrary.org/obo/' ||
+                     replace(COALESCE(c.uberon_id, ''), ':', '_') || '" target="_blank">' || c.uberon_id || '</a><br/>')
+            AS "References;<quick visible='true' />",
+            
+            replace(c.source, ';', ', ') AS "Source;<quick visible='true' />",
+            
+            IF(stats.chip_seq = 0, '',
+               'ChIP-seq: ' || (stats.chip_seq - stats.chip_seq_control) || ' (+' || stats.chip_seq_control || ' control)' ||
+               ', TF-' || stats.tf_chip_seq || '</br>') ||
+            IF(stats.chip_exo = 0, '',
+               'ChIP-exo: ' || (stats.chip_exo - stats.chip_exo_control) || ' (+' || stats.chip_exo_control || ' control)' ||
+               ', TF-' || stats.tf_chip_exo || '</br>') ||
+            IF(stats.histone_marks = 0, '',
+               'Histone marks: ' || (stats.histone_marks - stats.histone_marks_control) || ' (+' || stats.histone_marks_control || ' control)</br>') ||
+            IF(stats.dnase_seq = 0, '', 'DNase-seq: ' || stats.dnase_seq || '</br>') ||
+            IF(stats.atac_seq  = 0, '', 'ATAC-seq: '  || stats.atac_seq  || '</br>') ||
+            IF(stats.mnase_seq = 0, '', 'MNase-seq: ' || stats.mnase_seq || '</br>') ||
+            IF(stats.faire_seq = 0, '', 'FAIRE-seq: ' || stats.faire_seq || '</br>') ||
+            IF(stats.rna_seq   = 0, '', 'RNA-seq: '   || stats.rna_seq   || '</br>') ||
+            IF(stats.cage_seq  = 0, '', 'CAGE-seq: '  || stats.cage_seq)
+               
+            AS "Experiments;<quick visible='true' />",
+               
+            stats.chip_seq AS "Chip-seq;<quick visible='false' />",
+            stats.chip_exo AS "Chip-exo;<quick visible='false' />",
+            stats.histone_marks AS "Histone marks;<quick visible='false' />",
+            stats.dnase_seq AS "DNase-seq;<quick visible='false' />",
+            stats.atac_seq  AS "ATAC-seq;<quick visible='false' />",
+            stats.mnase_seq AS "MNase-seq;<quick visible='false' />",
+            stats.faire_seq AS "FAIRE-seq;<quick visible='false' />",
+            stats.tf_chip_seq AS "TF (ChIP-seq);<quick visible='false' />",
+            stats.tf_chip_exo AS "TF (ChIP-exo);<quick visible='false' />",
+
+            stats.rna_seq  AS "RNA-seq;<quick visible='false' />",
+            stats.cage_seq AS "CAGE-seq;<quick visible='false' />"
+
+          FROM ${INFO_SCHEMA}.cells c
+          LEFT JOIN ${STATISTICS_SCHEMA}.stats_cells2experiments stats ON c.id = stats.cell_id
+
+  - Details:
+      type: 1D_unknown
+      layout: '{"tableBox":"cell", "mode":"named", "hideTitle":"true"}'
+      invisible: true
+      roles: '@AllRoles'
+      code: |-
+          SELECT
+            c.id AS "ID",
+            'Cell report: ' || c.title AS "PageTitle",
+            c.species AS "Species"            
+          FROM ${INFO_SCHEMA}.cells c
+          WHERE (1=1)
+          <if parameter="ID">
+              AND c.ID = <parameter:ID/>
+          </if>
+
+  - Description:
+      layout: '{"tableBox":"cellDescription", "mode":"named", "hideTitle":"true"}'
+      invisible: true
+      roles: '@AllRoles'
+      code: |-
+          SELECT
+            c.ID AS "ID",
+            c.species AS "Species",
+            c.title AS "Title",
+           
+            IF(c.cellosaurus_id = '', '', 
+               '<a href="https://web.expasy.org/cellosaurus/' || c.cellosaurus_id || '" target="_blank">' || c.cellosaurus_id || '</a><br/>') ||
+            IF(c.cell_ontology_id = '', '',
+                     '<a href="http://purl.obolibrary.org/obo/' ||
+                     replace(COALESCE(c.cell_ontology_id, ''), ':', '_') || '" target="_blank">' || c.cell_ontology_id || '</a><br/>') ||
+            IF(c.exp_factor_ontology_id = '', '',
+                     '<a href="http://www.ebi.ac.uk/efo/' ||
+                     replace(COALESCE(c.exp_factor_ontology_id, ''), ':', '_') || '" target="_blank">' || c.exp_factor_ontology_id || '</a><br/>') ||
+            IF(c.uberon_id = '', '',
+                     '<a href="http://purl.obolibrary.org/obo/' ||
+                     replace(COALESCE(c.uberon_id, ''), ':', '_') || '" target="_blank">' || c.uberon_id || '</a><br/>')
+            AS "References",
+
+            c.source AS "Source",
+            c.source_id AS "SourceReferences",
+
+            IF(stats.chip_seq = 0, '',
+               'ChIP-seq: ' || (stats.chip_seq - stats.chip_seq_control) || ' (+' || stats.chip_seq_control || ' control)' ||
+               ', Transcription factors and cofactors -' || stats.tf_chip_seq || '</br>') ||
+            IF(stats.chip_exo = 0, '',
+               'ChIP-exo: ' || (stats.chip_exo - stats.chip_exo_control) || ' (+' || stats.chip_exo_control || ' control)' ||
+               ', Transcription factors and cofactors -' || stats.tf_chip_exo || '</br>') ||
+            IF(stats.histone_marks = 0, '',
+               'Histone marks: ' || (stats.histone_marks - stats.histone_marks_control) || ' (+' || stats.histone_marks_control || ' control)</br>') ||
+            IF(stats.dnase_seq = 0, '', 'DNase-seq: ' || stats.dnase_seq || '</br>') ||
+            IF(stats.atac_seq  = 0, '', 'ATAC-seq: '  || stats.atac_seq  || '</br>') ||
+            IF(stats.mnase_seq = 0, '', 'MNase-seq: ' || stats.mnase_seq || '</br>') ||
+            IF(stats.faire_seq = 0, '', 'FAIRE-seq: ' || stats.faire_seq || '</br>') ||
+            IF(stats.rna_seq  = 0, '', 'RNA-seq: '    || stats.rna_seq   || '</br>') ||
+            IF(stats.cage_seq  = 0, '', 'CAGE-seq: '  || stats.cage_seq)
+            AS "Experiments"
+            
+          FROM ${INFO_SCHEMA}.cells c
+          LEFT JOIN ${STATISTICS_SCHEMA}.stats_cells2experiments stats ON c.id = stats.cell_id
+          WHERE c.ID = <parameter:ID/>
+
+  operations:
+  - CellFilter:
+      type: Groovy
+      roles: '@AllRoles'
+      layout: '{"topForm":"CellFilter","title":"","filterUI":"no"}'
+      file: operations.CellFilter.groovy
+  - Filter:
+      roles: '@AllRoles'
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+    

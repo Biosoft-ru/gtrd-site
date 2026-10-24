@@ -1,0 +1,8 @@
+security:
+  roles:
+    Administrator: {}
+    SystemDeveloper: {}
+    User: {}
+    Test: {}
+    Guest: {}
+  groups: {}

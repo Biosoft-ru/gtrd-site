@@ -1,0 +1,15 @@
+_projects_:
+  type: table
+  displayName: Joint projects
+  order: '150'
+  primaryKey: dummy
+  queries:
+  queries:
+  - 'About':
+      type: static
+      roles: '@AllRoles'
+      value: https://muscle.biouml.org/index.php/Rat_muscle_TSSs_atlas
+  - 'Rat muscle TSSs atlas':
+      type: static
+      roles: '@AllRoles'
+      value: https://muscle.biouml.org/index.php/Rat_muscle_TSSs_atlas

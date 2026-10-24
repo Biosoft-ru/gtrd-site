@@ -1,0 +1,47 @@
+gtrd-be5-site:
+  projectFileStructure:
+    groovyQueriesDir: src/main/groovy
+    groovyOperationsDir: src/main/groovy
+    groovyExtendersDir: src/main/groovy
+  features:
+  - compiledGroovy
+  - eventDbLogging
+  l10n: en
+  modules:
+    - core:
+        entities:
+          - users
+  application:
+  - _gtrd_page_
+  - _statistics_
+  - gtrd_current.cage_peaks_expression_
+  - gtrd_current.cage_peaks_
+  - gtrd_current.cage_promoters_annotation_
+  - gtrd_current.cage_promoters2transcripts_
+  - gtrd_current.cage_enhancers_
+  - gtrd_current.cage_enhancers2genes_
+  - gtrd_current.cells
+  - gtrd_current.experiments
+  - gtrd_current.experiment_types
+  - gtrd_current.experiment2data_types
+  - gtrd_current.external_refs
+  - gtrd_current.data_types
+  - gtrd_current.database_info
+  - gtrd_current.files_info
+  - gtrd_current.files_info_stats
+  - gtrd_current.species
+  - gtrd_current.tf_links
+  - gtrd_current.uniprot
+  scripts:
+  - Post-db
+  - dictionaries
+  - stats
+  - copy-meta
+  - copy-cage
+  - database-info
+  - files-info
+  - tmp
+  includes: common
+
+
+
